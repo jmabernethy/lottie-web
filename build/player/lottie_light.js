@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 (typeof navigator !== "undefined") && (function(root, factory) {
     if (typeof define === "function" && define.amd) {
         define(function() {
@@ -10,11 +12,7 @@
         root.bodymovin = root.lottie;
     }
 }((window || {}), function(window) {
-	/* global locationHref:writable, animationManager, subframeEnabled:writable, defaultCurveSegments:writable, roundValues,
-expressionsPlugin:writable, PropertyFactory, ShapePropertyFactory, Matrix, idPrefix:writable */
-/* exported locationHref, subframeEnabled, expressionsPlugin, idPrefix */
 
-'use strict';
 
 /* exported svgNS, locationHref, initialDefaultFrame */
 
@@ -25,21 +23,16 @@ var locationHref = '';
 var initialDefaultFrame = -999999;
 
 /* global createSizedArray */
-/* exported subframeEnabled, expressionsPlugin, isSafari, cachedColors, bmPow, bmSqrt, bmFloor, bmMax, bmMin, ProjectInterface,
+/* exported subframeEnabled, isSafari, cachedColors, bmPow, bmSqrt, bmFloor, bmMax, bmMin, ProjectInterface,
 defaultCurveSegments, degToRads, roundCorner, bmRnd, styleDiv, BMEnterFrameEvent, BMCompleteEvent, BMCompleteLoopEvent,
 BMSegmentStartEvent, BMDestroyEvent, BMRenderFrameErrorEvent, BMConfigErrorEvent, BMAnimationConfigErrorEvent, createElementID,
 addSaturationToRGB, addBrightnessToRGB, addHueToRGB, rgbToHex */
 
 var subframeEnabled = true;
 var idPrefix = '';
-var expressionsPlugin;
-var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-var cachedColors = {};
-var bmRnd;
 var bmPow = Math.pow;
 var bmSqrt = Math.sqrt;
 var bmFloor = Math.floor;
-var bmMax = Math.max;
 var bmMin = Math.min;
 
 var BMMath = {};
@@ -83,19 +76,6 @@ function roundValues(flag) {
 }
 roundValues(false);
 
-function styleDiv(element) {
-  element.style.position = 'absolute';
-  element.style.top = 0;
-  element.style.left = 0;
-  element.style.display = 'block';
-  element.style.transformOrigin = '0 0';
-  element.style.webkitTransformOrigin = '0 0';
-  element.style.backfaceVisibility = 'visible';
-  element.style.webkitBackfaceVisibility = 'visible';
-  element.style.transformStyle = 'preserve-3d';
-  element.style.webkitTransformStyle = 'preserve-3d';
-  element.style.mozTransformStyle = 'preserve-3d';
-}
 
 function BMEnterFrameEvent(type, currentTime, totalTime, frameMultiplier) {
   this.type = type;
@@ -138,10 +118,6 @@ function BMConfigErrorEvent(nativeError) {
   this.nativeError = nativeError;
 }
 
-function BMAnimationConfigErrorEvent(type, nativeError) {
-  this.type = type;
-  this.nativeError = nativeError;
-}
 
 var createElementID = (function () {
   var _count = 0;
@@ -151,89 +127,6 @@ var createElementID = (function () {
   };
 }());
 
-function HSVtoRGB(h, s, v) {
-  var r;
-  var g;
-  var b;
-  var i;
-  var f;
-  var p;
-  var q;
-  var t;
-  i = Math.floor(h * 6);
-  f = h * 6 - i;
-  p = v * (1 - s);
-  q = v * (1 - f * s);
-  t = v * (1 - (1 - f) * s);
-  switch (i % 6) {
-    case 0: r = v; g = t; b = p; break;
-    case 1: r = q; g = v; b = p; break;
-    case 2: r = p; g = v; b = t; break;
-    case 3: r = p; g = q; b = v; break;
-    case 4: r = t; g = p; b = v; break;
-    case 5: r = v; g = p; b = q; break;
-    default: break;
-  }
-  return [r,
-    g,
-    b];
-}
-
-function RGBtoHSV(r, g, b) {
-  var max = Math.max(r, g, b);
-  var min = Math.min(r, g, b);
-  var d = max - min;
-  var h;
-  var s = (max === 0 ? 0 : d / max);
-  var v = max / 255;
-
-  switch (max) {
-    case min: h = 0; break;
-    case r: h = (g - b) + d * (g < b ? 6 : 0); h /= 6 * d; break;
-    case g: h = (b - r) + d * 2; h /= 6 * d; break;
-    case b: h = (r - g) + d * 4; h /= 6 * d; break;
-    default: break;
-  }
-
-  return [
-    h,
-    s,
-    v,
-  ];
-}
-
-function addSaturationToRGB(color, offset) {
-  var hsv = RGBtoHSV(color[0] * 255, color[1] * 255, color[2] * 255);
-  hsv[1] += offset;
-  if (hsv[1] > 1) {
-    hsv[1] = 1;
-  } else if (hsv[1] <= 0) {
-    hsv[1] = 0;
-  }
-  return HSVtoRGB(hsv[0], hsv[1], hsv[2]);
-}
-
-function addBrightnessToRGB(color, offset) {
-  var hsv = RGBtoHSV(color[0] * 255, color[1] * 255, color[2] * 255);
-  hsv[2] += offset;
-  if (hsv[2] > 1) {
-    hsv[2] = 1;
-  } else if (hsv[2] < 0) {
-    hsv[2] = 0;
-  }
-  return HSVtoRGB(hsv[0], hsv[1], hsv[2]);
-}
-
-function addHueToRGB(color, offset) {
-  var hsv = RGBtoHSV(color[0] * 255, color[1] * 255, color[2] * 255);
-  hsv[0] += offset / 360;
-  if (hsv[0] > 1) {
-    hsv[0] -= 1;
-  } else if (hsv[0] < 0) {
-    hsv[0] += 1;
-  }
-  return HSVtoRGB(hsv[0], hsv[1], hsv[2]);
-}
 
 var rgbToHex = (function () {
   var colorMap = [];
@@ -262,9 +155,9 @@ function BaseEvent() {}
 BaseEvent.prototype = {
   triggerEvent: function (eventName, args) {
     if (this._cbs[eventName]) {
-      var callbacks = this._cbs[eventName];
-      for (var i = 0; i < callbacks.length; i += 1) {
-        callbacks[i](args);
+      var len = this._cbs[eventName].length;
+      for (var i = 0; i < len; i += 1) {
+        this._cbs[eventName][i](args);
       }
     }
   },
@@ -348,13 +241,6 @@ function createNS(type) {
   return document.createElementNS(svgNS, type);
 }
 
-/* exported createTag */
-
-function createTag(type) {
-  // return {appendChild:function(){},setAttribute:function(){},style:{}}
-  return document.createElement(type);
-}
-
 function DynamicPropertyContainer() {}
 DynamicPropertyContainer.prototype = {
   addDynamicProperty: function (prop) {
@@ -409,20 +295,6 @@ var getBlendMode = (function () {
     return blendModeEnums[mode] || '';
   };
 }());
-
-/* exported lineCapEnum, lineJoinEnum */
-
-var lineCapEnum = {
-  1: 'butt',
-  2: 'round',
-  3: 'square',
-};
-
-var lineJoinEnum = {
-  1: 'miter',
-  2: 'round',
-  3: 'bevel',
-};
 
 /* global createTypedArray */
 
@@ -1238,32 +1110,6 @@ var BezierFactory = (function () {
   return ob;
 }());
 
-(function () {
-  var lastTime = 0;
-  var vendors = ['ms', 'moz', 'webkit', 'o'];
-  for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) { // eslint-disable-line no-plusplus
-    window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
-    window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
-  }
-  if (!window.requestAnimationFrame) {
-    window.requestAnimationFrame = function (callback) {
-      var currTime = new Date().getTime();
-      var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-      var id = setTimeout(function () {
-        callback(currTime + timeToCall);
-      },
-      timeToCall);
-      lastTime = currTime + timeToCall;
-      return id;
-    };
-  }
-  if (!window.cancelAnimationFrame) {
-    window.cancelAnimationFrame = function (id) {
-      clearTimeout(id);
-    };
-  }
-}());
-
 /* exported extendPrototype, getDescriptor, createProxyFunction */
 
 function extendPrototype(sources, destination) {
@@ -1531,9 +1377,8 @@ var bez = bezFunction();
 /* exported dataManager */
 
 function dataFunctionManager() {
-  // var tCanvasHelper = createTag('canvas').getContext('2d');
 
-  function completeLayers(layers, comps, fontManager) {
+  function completeLayers(layers, comps) {
     var layerData;
     var i;
     var len = layers.length;
@@ -1548,33 +1393,12 @@ function dataFunctionManager() {
         if (layerData.tt) {
           layers[i - 1].td = layerData.tt;
         }
-        if (layerData.hasMask) {
-          var maskProps = layerData.masksProperties;
-          jLen = maskProps.length;
-          for (j = 0; j < jLen; j += 1) {
-            if (maskProps[j].pt.k.i) {
-              convertPathsToAbsoluteValues(maskProps[j].pt.k);
-            } else {
-              kLen = maskProps[j].pt.k.length;
-              for (k = 0; k < kLen; k += 1) {
-                if (maskProps[j].pt.k[k].s) {
-                  convertPathsToAbsoluteValues(maskProps[j].pt.k[k].s[0]);
-                }
-                if (maskProps[j].pt.k[k].e) {
-                  convertPathsToAbsoluteValues(maskProps[j].pt.k[k].e[0]);
-                }
-              }
-            }
-          }
-        }
         if (layerData.ty === 0) {
           layerData.layers = findCompLayers(layerData.refId, comps);
-          completeLayers(layerData.layers, comps, fontManager);
+          completeLayers(layerData.layers, comps);
         } else if (layerData.ty === 4) {
           completeShapes(layerData.shapes);
-        } else if (layerData.ty === 5) {
-          completeText(layerData, fontManager);
-        }
+        } 
       }
     }
   }
@@ -1626,7 +1450,7 @@ function dataFunctionManager() {
     var len = path.i.length;
     for (i = 0; i < len; i += 1) {
       path.i[i][0] += path.v[i][0];
-      path.i[i][1] += path.v[i][1];
+      path.i[i][1] += path.v[i][1];                                                                                             
       path.o[i][0] += path.v[i][0];
       path.o[i][1] += path.v[i][1];
     }
@@ -1824,25 +1648,6 @@ function dataFunctionManager() {
       var kLen;
       for (i = 0; i < len; i += 1) {
         layerData = layers[i];
-        if (layerData.hasMask) {
-          var maskProps = layerData.masksProperties;
-          jLen = maskProps.length;
-          for (j = 0; j < jLen; j += 1) {
-            if (maskProps[j].pt.k.i) {
-              maskProps[j].pt.k.c = maskProps[j].cl;
-            } else {
-              kLen = maskProps[j].pt.k.length;
-              for (k = 0; k < kLen; k += 1) {
-                if (maskProps[j].pt.k[k].s) {
-                  maskProps[j].pt.k[k].s[0].c = maskProps[j].cl;
-                }
-                if (maskProps[j].pt.k[k].e) {
-                  maskProps[j].pt.k[k].e[0].c = maskProps[j].cl;
-                }
-              }
-            }
-          }
-        }
         if (layerData.ty === 4) {
           completeClosingShapes(layerData.shapes);
         }
@@ -1865,7 +1670,7 @@ function dataFunctionManager() {
     };
   }());
 
-  function completeData(animationData, fontManager) {
+  function completeData(animationData) {
     if (animationData.__complete) {
       return;
     }
@@ -1873,15 +1678,10 @@ function dataFunctionManager() {
     checkText(animationData);
     checkChars(animationData);
     checkShapes(animationData);
-    completeLayers(animationData.layers, animationData.assets, fontManager);
+    completeLayers(animationData.layers, animationData.assets);
     animationData.__complete = true;
   }
 
-  function completeText(data) {
-    if (data.t.a.length === 0 && !('m' in data.t.p)) {
-      data.singleShape = true;
-    }
-  }
 
   var moduleOb = {};
   moduleOb.completeData = completeData;
@@ -1895,401 +1695,6 @@ function dataFunctionManager() {
 
 var dataManager = dataFunctionManager();
 
-/* exported getFontProperties */
-
-function getFontProperties(fontData) {
-  var styles = fontData.fStyle ? fontData.fStyle.split(' ') : [];
-
-  var fWeight = 'normal'; var
-    fStyle = 'normal';
-  var len = styles.length;
-  var styleName;
-  for (var i = 0; i < len; i += 1) {
-    styleName = styles[i].toLowerCase();
-    switch (styleName) {
-      case 'italic':
-        fStyle = 'italic';
-        break;
-      case 'bold':
-        fWeight = '700';
-        break;
-      case 'black':
-        fWeight = '900';
-        break;
-      case 'medium':
-        fWeight = '500';
-        break;
-      case 'regular':
-      case 'normal':
-        fWeight = '400';
-        break;
-      case 'light':
-      case 'thin':
-        fWeight = '200';
-        break;
-      default:
-        break;
-    }
-  }
-
-  return {
-    style: fStyle,
-    weight: fontData.fWeight || fWeight,
-  };
-}
-
-/* global createNS, createTag, getFontProperties */
-/* exported FontManager */
-
-var FontManager = (function () {
-  var maxWaitingTime = 5000;
-  var emptyChar = {
-    w: 0,
-    size: 0,
-    shapes: [],
-  };
-  var combinedCharacters = [];
-  // Hindi characters
-  combinedCharacters = combinedCharacters.concat([2304, 2305, 2306, 2307, 2362, 2363, 2364, 2364, 2366,
-    2367, 2368, 2369, 2370, 2371, 2372, 2373, 2374, 2375, 2376, 2377, 2378, 2379,
-    2380, 2381, 2382, 2383, 2387, 2388, 2389, 2390, 2391, 2402, 2403]);
-
-  var surrogateModifiers = [
-    'd83cdffb',
-    'd83cdffc',
-    'd83cdffd',
-    'd83cdffe',
-    'd83cdfff',
-  ];
-
-  var zeroWidthJoiner = [65039, 8205];
-
-  function trimFontOptions(font) {
-    var familyArray = font.split(',');
-    var i;
-    var len = familyArray.length;
-    var enabledFamilies = [];
-    for (i = 0; i < len; i += 1) {
-      if (familyArray[i] !== 'sans-serif' && familyArray[i] !== 'monospace') {
-        enabledFamilies.push(familyArray[i]);
-      }
-    }
-    return enabledFamilies.join(',');
-  }
-
-  function setUpNode(font, family) {
-    var parentNode = createTag('span');
-    // Node is invisible to screen readers.
-    parentNode.setAttribute('aria-hidden', true);
-    parentNode.style.fontFamily = family;
-    var node = createTag('span');
-    // Characters that vary significantly among different fonts
-    node.innerText = 'giItT1WQy@!-/#';
-    // Visible - so we can measure it - but not on the screen
-    parentNode.style.position = 'absolute';
-    parentNode.style.left = '-10000px';
-    parentNode.style.top = '-10000px';
-    // Large font size makes even subtle changes obvious
-    parentNode.style.fontSize = '300px';
-    // Reset any font properties
-    parentNode.style.fontVariant = 'normal';
-    parentNode.style.fontStyle = 'normal';
-    parentNode.style.fontWeight = 'normal';
-    parentNode.style.letterSpacing = '0';
-    parentNode.appendChild(node);
-    document.body.appendChild(parentNode);
-
-    // Remember width with no applied web font
-    var width = node.offsetWidth;
-    node.style.fontFamily = trimFontOptions(font) + ', ' + family;
-    return { node: node, w: width, parent: parentNode };
-  }
-
-  function checkLoadedFonts() {
-    var i;
-    var len = this.fonts.length;
-    var node;
-    var w;
-    var loadedCount = len;
-    for (i = 0; i < len; i += 1) {
-      if (this.fonts[i].loaded) {
-        loadedCount -= 1;
-      } else if (this.fonts[i].fOrigin === 'n' || this.fonts[i].origin === 0) {
-        this.fonts[i].loaded = true;
-      } else {
-        node = this.fonts[i].monoCase.node;
-        w = this.fonts[i].monoCase.w;
-        if (node.offsetWidth !== w) {
-          loadedCount -= 1;
-          this.fonts[i].loaded = true;
-        } else {
-          node = this.fonts[i].sansCase.node;
-          w = this.fonts[i].sansCase.w;
-          if (node.offsetWidth !== w) {
-            loadedCount -= 1;
-            this.fonts[i].loaded = true;
-          }
-        }
-        if (this.fonts[i].loaded) {
-          this.fonts[i].sansCase.parent.parentNode.removeChild(this.fonts[i].sansCase.parent);
-          this.fonts[i].monoCase.parent.parentNode.removeChild(this.fonts[i].monoCase.parent);
-        }
-      }
-    }
-
-    if (loadedCount !== 0 && Date.now() - this.initTime < maxWaitingTime) {
-      setTimeout(this.checkLoadedFontsBinded, 20);
-    } else {
-      setTimeout(this.setIsLoadedBinded, 10);
-    }
-  }
-
-  function createHelper(def, fontData) {
-    var tHelper = createNS('text');
-    tHelper.style.fontSize = '100px';
-    // tHelper.style.fontFamily = fontData.fFamily;
-
-    var fontProps = getFontProperties(fontData);
-    tHelper.setAttribute('font-family', fontData.fFamily);
-    tHelper.setAttribute('font-style', fontProps.style);
-    tHelper.setAttribute('font-weight', fontProps.weight);
-    tHelper.textContent = '1';
-    if (fontData.fClass) {
-      tHelper.style.fontFamily = 'inherit';
-      tHelper.setAttribute('class', fontData.fClass);
-    } else {
-      tHelper.style.fontFamily = fontData.fFamily;
-    }
-    def.appendChild(tHelper);
-    var tCanvasHelper = createTag('canvas').getContext('2d');
-    tCanvasHelper.font = fontData.fWeight + ' ' + fontData.fStyle + ' 100px ' + fontData.fFamily;
-    // tCanvasHelper.font = ' 100px '+ fontData.fFamily;
-    return tHelper;
-  }
-
-  function addFonts(fontData, defs) {
-    if (!fontData) {
-      this.isLoaded = true;
-      return;
-    }
-    if (this.chars) {
-      this.isLoaded = true;
-      this.fonts = fontData.list;
-      return;
-    }
-
-    var fontArr = fontData.list;
-    var i;
-    var len = fontArr.length;
-    var _pendingFonts = len;
-    for (i = 0; i < len; i += 1) {
-      var shouldLoadFont = true;
-      var loadedSelector;
-      var j;
-      fontArr[i].loaded = false;
-      fontArr[i].monoCase = setUpNode(fontArr[i].fFamily, 'monospace');
-      fontArr[i].sansCase = setUpNode(fontArr[i].fFamily, 'sans-serif');
-      if (!fontArr[i].fPath) {
-        fontArr[i].loaded = true;
-        _pendingFonts -= 1;
-      } else if (fontArr[i].fOrigin === 'p' || fontArr[i].origin === 3) {
-        loadedSelector = document.querySelectorAll('style[f-forigin="p"][f-family="' + fontArr[i].fFamily + '"], style[f-origin="3"][f-family="' + fontArr[i].fFamily + '"]');
-
-        if (loadedSelector.length > 0) {
-          shouldLoadFont = false;
-        }
-
-        if (shouldLoadFont) {
-          var s = createTag('style');
-          s.setAttribute('f-forigin', fontArr[i].fOrigin);
-          s.setAttribute('f-origin', fontArr[i].origin);
-          s.setAttribute('f-family', fontArr[i].fFamily);
-          s.type = 'text/css';
-          s.innerText = '@font-face {font-family: ' + fontArr[i].fFamily + "; font-style: normal; src: url('" + fontArr[i].fPath + "');}";
-          defs.appendChild(s);
-        }
-      } else if (fontArr[i].fOrigin === 'g' || fontArr[i].origin === 1) {
-        loadedSelector = document.querySelectorAll('link[f-forigin="g"], link[f-origin="1"]');
-
-        for (j = 0; j < loadedSelector.length; j += 1) {
-          if (loadedSelector[j].href.indexOf(fontArr[i].fPath) !== -1) {
-            // Font is already loaded
-            shouldLoadFont = false;
-          }
-        }
-
-        if (shouldLoadFont) {
-          var l = createTag('link');
-          l.setAttribute('f-forigin', fontArr[i].fOrigin);
-          l.setAttribute('f-origin', fontArr[i].origin);
-          l.type = 'text/css';
-          l.rel = 'stylesheet';
-          l.href = fontArr[i].fPath;
-          document.body.appendChild(l);
-        }
-      } else if (fontArr[i].fOrigin === 't' || fontArr[i].origin === 2) {
-        loadedSelector = document.querySelectorAll('script[f-forigin="t"], script[f-origin="2"]');
-
-        for (j = 0; j < loadedSelector.length; j += 1) {
-          if (fontArr[i].fPath === loadedSelector[j].src) {
-            // Font is already loaded
-            shouldLoadFont = false;
-          }
-        }
-
-        if (shouldLoadFont) {
-          var sc = createTag('link');
-          sc.setAttribute('f-forigin', fontArr[i].fOrigin);
-          sc.setAttribute('f-origin', fontArr[i].origin);
-          sc.setAttribute('rel', 'stylesheet');
-          sc.setAttribute('href', fontArr[i].fPath);
-          defs.appendChild(sc);
-        }
-      }
-      fontArr[i].helper = createHelper(defs, fontArr[i]);
-      fontArr[i].cache = {};
-      this.fonts.push(fontArr[i]);
-    }
-    if (_pendingFonts === 0) {
-      this.isLoaded = true;
-    } else {
-      // On some cases even if the font is loaded, it won't load correctly when measuring text on canvas.
-      // Adding this timeout seems to fix it
-      setTimeout(this.checkLoadedFonts.bind(this), 100);
-    }
-  }
-
-  function addChars(chars) {
-    if (!chars) {
-      return;
-    }
-    if (!this.chars) {
-      this.chars = [];
-    }
-    var i;
-    var len = chars.length;
-    var j;
-    var jLen = this.chars.length;
-    var found;
-    for (i = 0; i < len; i += 1) {
-      j = 0;
-      found = false;
-      while (j < jLen) {
-        if (this.chars[j].style === chars[i].style && this.chars[j].fFamily === chars[i].fFamily && this.chars[j].ch === chars[i].ch) {
-          found = true;
-        }
-        j += 1;
-      }
-      if (!found) {
-        this.chars.push(chars[i]);
-        jLen += 1;
-      }
-    }
-  }
-
-  function getCharData(char, style, font) {
-    var i = 0;
-    var len = this.chars.length;
-    while (i < len) {
-      if (this.chars[i].ch === char && this.chars[i].style === style && this.chars[i].fFamily === font) {
-        return this.chars[i];
-      }
-      i += 1;
-    }
-    if (((typeof char === 'string' && char.charCodeAt(0) !== 13) || !char)
-            && console
-            && console.warn // eslint-disable-line no-console
-            && !this._warned
-    ) {
-      this._warned = true;
-      console.warn('Missing character from exported characters list: ', char, style, font); // eslint-disable-line no-console
-    }
-    return emptyChar;
-  }
-
-  function measureText(char, fontName, size) {
-    var fontData = this.getFontByName(fontName);
-    var index = char.charCodeAt(0);
-    if (!fontData.cache[index + 1]) {
-      var tHelper = fontData.helper;
-      // Canvas version
-      // fontData.cache[index] = tHelper.measureText(char).width / 100;
-      // SVG version
-      // console.log(tHelper.getBBox().width)
-      if (char === ' ') {
-        tHelper.textContent = '|' + char + '|';
-        var doubleSize = tHelper.getComputedTextLength();
-        tHelper.textContent = '||';
-        var singleSize = tHelper.getComputedTextLength();
-        fontData.cache[index + 1] = (doubleSize - singleSize) / 100;
-      } else {
-        tHelper.textContent = char;
-        fontData.cache[index + 1] = (tHelper.getComputedTextLength()) / 100;
-      }
-    }
-    return fontData.cache[index + 1] * size;
-  }
-
-  function getFontByName(name) {
-    var i = 0;
-    var len = this.fonts.length;
-    while (i < len) {
-      if (this.fonts[i].fName === name) {
-        return this.fonts[i];
-      }
-      i += 1;
-    }
-    return this.fonts[0];
-  }
-
-  function isModifier(firstCharCode, secondCharCode) {
-    var sum = firstCharCode.toString(16) + secondCharCode.toString(16);
-    return surrogateModifiers.indexOf(sum) !== -1;
-  }
-
-  function isZeroWidthJoiner(firstCharCode, secondCharCode) {
-    if (!secondCharCode) {
-      return firstCharCode === zeroWidthJoiner[1];
-    }
-    return firstCharCode === zeroWidthJoiner[0] && secondCharCode === zeroWidthJoiner[1];
-  }
-
-  function isCombinedCharacter(char) {
-    return combinedCharacters.indexOf(char) !== -1;
-  }
-
-  function setIsLoaded() {
-    this.isLoaded = true;
-  }
-
-  var Font = function () {
-    this.fonts = [];
-    this.chars = null;
-    this.typekitLoaded = 0;
-    this.isLoaded = false;
-    this._warned = false;
-    this.initTime = Date.now();
-    this.setIsLoadedBinded = this.setIsLoaded.bind(this);
-    this.checkLoadedFontsBinded = this.checkLoadedFonts.bind(this);
-  };
-  Font.isModifier = isModifier;
-  Font.isZeroWidthJoiner = isZeroWidthJoiner;
-  Font.isCombinedCharacter = isCombinedCharacter;
-
-  var fontPrototype = {
-    addChars: addChars,
-    addFonts: addFonts,
-    getCharData: getCharData,
-    getFontByName: getFontByName,
-    measureText: measureText,
-    checkLoadedFonts: checkLoadedFonts,
-    setIsLoaded: setIsLoaded,
-  };
-
-  Font.prototype = fontPrototype;
-
-  return Font;
-}());
 
 /* global initialDefaultFrame, BezierFactory, degToRads, bez, createTypedArray */
 /* exported PropertyFactory */
@@ -2829,47 +2234,6 @@ var TransformPropertyFactory = (function () {
           .rotateY(this.or.v[1])
           .rotateX(this.or.v[0]);
       }
-      if (this.autoOriented) {
-        var v1;
-        var v2;
-        frameRate = this.elem.globalData.frameRate;
-        if (this.p && this.p.keyframes && this.p.getValueAtTime) {
-          if (this.p._caching.lastFrame + this.p.offsetTime <= this.p.keyframes[0].t) {
-            v1 = this.p.getValueAtTime((this.p.keyframes[0].t + 0.01) / frameRate, 0);
-            v2 = this.p.getValueAtTime(this.p.keyframes[0].t / frameRate, 0);
-          } else if (this.p._caching.lastFrame + this.p.offsetTime >= this.p.keyframes[this.p.keyframes.length - 1].t) {
-            v1 = this.p.getValueAtTime((this.p.keyframes[this.p.keyframes.length - 1].t / frameRate), 0);
-            v2 = this.p.getValueAtTime((this.p.keyframes[this.p.keyframes.length - 1].t - 0.05) / frameRate, 0);
-          } else {
-            v1 = this.p.pv;
-            v2 = this.p.getValueAtTime((this.p._caching.lastFrame + this.p.offsetTime - 0.01) / frameRate, this.p.offsetTime);
-          }
-        } else if (this.px && this.px.keyframes && this.py.keyframes && this.px.getValueAtTime && this.py.getValueAtTime) {
-          v1 = [];
-          v2 = [];
-          var px = this.px;
-          var py = this.py;
-          if (px._caching.lastFrame + px.offsetTime <= px.keyframes[0].t) {
-            v1[0] = px.getValueAtTime((px.keyframes[0].t + 0.01) / frameRate, 0);
-            v1[1] = py.getValueAtTime((py.keyframes[0].t + 0.01) / frameRate, 0);
-            v2[0] = px.getValueAtTime((px.keyframes[0].t) / frameRate, 0);
-            v2[1] = py.getValueAtTime((py.keyframes[0].t) / frameRate, 0);
-          } else if (px._caching.lastFrame + px.offsetTime >= px.keyframes[px.keyframes.length - 1].t) {
-            v1[0] = px.getValueAtTime((px.keyframes[px.keyframes.length - 1].t / frameRate), 0);
-            v1[1] = py.getValueAtTime((py.keyframes[py.keyframes.length - 1].t / frameRate), 0);
-            v2[0] = px.getValueAtTime((px.keyframes[px.keyframes.length - 1].t - 0.01) / frameRate, 0);
-            v2[1] = py.getValueAtTime((py.keyframes[py.keyframes.length - 1].t - 0.01) / frameRate, 0);
-          } else {
-            v1 = [px.pv, py.pv];
-            v2[0] = px.getValueAtTime((px._caching.lastFrame + px.offsetTime - 0.01) / frameRate, px.offsetTime);
-            v2[1] = py.getValueAtTime((py._caching.lastFrame + py.offsetTime - 0.01) / frameRate, py.offsetTime);
-          }
-        } else {
-          v2 = defaultVector;
-          v1 = v2;
-        }
-        this.v.rotate(-Math.atan2(v1[1] - v2[1], v1[0] - v2[0]));
-      }
       if (this.data.p && this.data.p.s) {
         if (this.data.p.z) {
           this.v.translate(this.px.v, this.py.v, -this.pz.v);
@@ -2915,11 +2279,6 @@ var TransformPropertyFactory = (function () {
         .rotateX(this.or.v[0]);
       this.appliedTransformations = 4;
     }
-  }
-
-  function autoOrient() {
-    //
-    // var prevP = this.getValueAtTime();
   }
 
   function addDynamicProperty(prop) {
@@ -2987,7 +2346,6 @@ var TransformPropertyFactory = (function () {
     applyToMatrix: applyToMatrix,
     getValue: processKeys,
     precalculateMatrix: precalculateMatrix,
-    autoOrient: autoOrient,
   };
 
   extendPrototype([DynamicPropertyContainer], TransformProperty);
@@ -4640,300 +3998,10 @@ var buildShapeString = function (pathNodes, length, closed, mat) {
   return shapeString;
 };
 
-/* global Howl */
-/* exported audioControllerFactory */
 
-var audioControllerFactory = (function () {
-  function AudioController(audioFactory) {
-    this.audios = [];
-    this.audioFactory = audioFactory;
-    this._volume = 1;
-    this._isMuted = false;
-  }
-
-  AudioController.prototype = {
-    addAudio: function (audio) {
-      this.audios.push(audio);
-    },
-    pause: function () {
-      var i;
-      var len = this.audios.length;
-      for (i = 0; i < len; i += 1) {
-        this.audios[i].pause();
-      }
-    },
-    resume: function () {
-      var i;
-      var len = this.audios.length;
-      for (i = 0; i < len; i += 1) {
-        this.audios[i].resume();
-      }
-    },
-    setRate: function (rateValue) {
-      var i;
-      var len = this.audios.length;
-      for (i = 0; i < len; i += 1) {
-        this.audios[i].setRate(rateValue);
-      }
-    },
-    createAudio: function (assetPath) {
-      if (this.audioFactory) {
-        return this.audioFactory(assetPath);
-      } if (Howl) {
-        return new Howl({
-          src: [assetPath],
-        });
-      }
-      return {
-        isPlaying: false,
-        play: function () { this.isPlaying = true; },
-        seek: function () { this.isPlaying = false; },
-        playing: function () {},
-        rate: function () {},
-        setVolume: function () {},
-      };
-    },
-    setAudioFactory: function (audioFactory) {
-      this.audioFactory = audioFactory;
-    },
-    setVolume: function (value) {
-      this._volume = value;
-      this._updateVolume();
-    },
-    mute: function () {
-      this._isMuted = true;
-      this._updateVolume();
-    },
-    unmute: function () {
-      this._isMuted = false;
-      this._updateVolume();
-    },
-    getVolume: function () {
-      return this._volume;
-    },
-    _updateVolume: function () {
-      var i;
-      var len = this.audios.length;
-      for (i = 0; i < len; i += 1) {
-        this.audios[i].volume(this._volume * (this._isMuted ? 0 : 1));
-      }
-    },
-  };
-
-  return function () {
-    return new AudioController();
-  };
-}());
 
 /* global createTag, createNS, isSafari, assetLoader */
-/* exported ImagePreloader */
 
-var ImagePreloader = (function () {
-  var proxyImage = (function () {
-    var canvas = createTag('canvas');
-    canvas.width = 1;
-    canvas.height = 1;
-    var ctx = canvas.getContext('2d');
-    ctx.fillStyle = 'rgba(0,0,0,0)';
-    ctx.fillRect(0, 0, 1, 1);
-    return canvas;
-  }());
-
-  function imageLoaded() {
-    this.loadedAssets += 1;
-    if (this.loadedAssets === this.totalImages && this.loadedFootagesCount === this.totalFootages) {
-      if (this.imagesLoadedCb) {
-        this.imagesLoadedCb(null);
-      }
-    }
-  }
-  function footageLoaded() {
-    this.loadedFootagesCount += 1;
-    if (this.loadedAssets === this.totalImages && this.loadedFootagesCount === this.totalFootages) {
-      if (this.imagesLoadedCb) {
-        this.imagesLoadedCb(null);
-      }
-    }
-  }
-
-  function getAssetsPath(assetData, assetsPath, originalPath) {
-    var path = '';
-    if (assetData.e) {
-      path = assetData.p;
-    } else if (assetsPath) {
-      var imagePath = assetData.p;
-      if (imagePath.indexOf('images/') !== -1) {
-        imagePath = imagePath.split('/')[1];
-      }
-      path = assetsPath + imagePath;
-    } else {
-      path = originalPath;
-      path += assetData.u ? assetData.u : '';
-      path += assetData.p;
-    }
-    return path;
-  }
-
-  function testImageLoaded(img) {
-    var _count = 0;
-    var intervalId = setInterval(function () {
-      var box = img.getBBox();
-      if (box.width || _count > 500) {
-        this._imageLoaded();
-        clearInterval(intervalId);
-      }
-      _count += 1;
-    }.bind(this), 50);
-  }
-
-  function createImageData(assetData) {
-    var path = getAssetsPath(assetData, this.assetsPath, this.path);
-    var img = createNS('image');
-    if (isSafari) {
-      this.testImageLoaded(img);
-    } else {
-      img.addEventListener('load', this._imageLoaded, false);
-    }
-    img.addEventListener('error', function () {
-      ob.img = proxyImage;
-      this._imageLoaded();
-    }.bind(this), false);
-    img.setAttributeNS('http://www.w3.org/1999/xlink', 'href', path);
-    if (this._elementHelper.append) {
-      this._elementHelper.append(img);
-    } else {
-      this._elementHelper.appendChild(img);
-    }
-    var ob = {
-      img: img,
-      assetData: assetData,
-    };
-    return ob;
-  }
-
-  function createImgData(assetData) {
-    var path = getAssetsPath(assetData, this.assetsPath, this.path);
-    var img = createTag('img');
-    img.crossOrigin = 'anonymous';
-    img.addEventListener('load', this._imageLoaded, false);
-    img.addEventListener('error', function () {
-      ob.img = proxyImage;
-      this._imageLoaded();
-    }.bind(this), false);
-    img.src = path;
-    var ob = {
-      img: img,
-      assetData: assetData,
-    };
-    return ob;
-  }
-
-  function createFootageData(data) {
-    var ob = {
-      assetData: data,
-    };
-    var path = getAssetsPath(data, this.assetsPath, this.path);
-    assetLoader.load(path, function (footageData) {
-      ob.img = footageData;
-      this._footageLoaded();
-    }.bind(this), function () {
-      ob.img = {};
-      this._footageLoaded();
-    }.bind(this));
-    return ob;
-  }
-
-  function loadAssets(assets, cb) {
-    this.imagesLoadedCb = cb;
-    var i;
-    var len = assets.length;
-    for (i = 0; i < len; i += 1) {
-      if (!assets[i].layers) {
-        if (!assets[i].t || assets[i].t === 'seq') {
-          this.totalImages += 1;
-          this.images.push(this._createImageData(assets[i]));
-        } else if (assets[i].t === 3) {
-          this.totalFootages += 1;
-          this.images.push(this.createFootageData(assets[i]));
-        }
-      }
-    }
-  }
-
-  function setPath(path) {
-    this.path = path || '';
-  }
-
-  function setAssetsPath(path) {
-    this.assetsPath = path || '';
-  }
-
-  function getAsset(assetData) {
-    var i = 0;
-    var len = this.images.length;
-    while (i < len) {
-      if (this.images[i].assetData === assetData) {
-        return this.images[i].img;
-      }
-      i += 1;
-    }
-    return null;
-  }
-
-  function destroy() {
-    this.imagesLoadedCb = null;
-    this.images.length = 0;
-  }
-
-  function loadedImages() {
-    return this.totalImages === this.loadedAssets;
-  }
-
-  function loadedFootages() {
-    return this.totalFootages === this.loadedFootagesCount;
-  }
-
-  function setCacheType(type, elementHelper) {
-    if (type === 'svg') {
-      this._elementHelper = elementHelper;
-      this._createImageData = this.createImageData.bind(this);
-    } else {
-      this._createImageData = this.createImgData.bind(this);
-    }
-  }
-
-  function ImagePreloaderFactory() {
-    this._imageLoaded = imageLoaded.bind(this);
-    this._footageLoaded = footageLoaded.bind(this);
-    this.testImageLoaded = testImageLoaded.bind(this);
-    this.createFootageData = createFootageData.bind(this);
-    this.assetsPath = '';
-    this.path = '';
-    this.totalImages = 0;
-    this.totalFootages = 0;
-    this.loadedAssets = 0;
-    this.loadedFootagesCount = 0;
-    this.imagesLoadedCb = null;
-    this.images = [];
-  }
-
-  ImagePreloaderFactory.prototype = {
-    loadAssets: loadAssets,
-    setAssetsPath: setAssetsPath,
-    setPath: setPath,
-    loadedImages: loadedImages,
-    loadedFootages: loadedFootages,
-    destroy: destroy,
-    getAsset: getAsset,
-    createImgData: createImgData,
-    createImageData: createImageData,
-    imageLoaded: imageLoaded,
-    footageLoaded: footageLoaded,
-    setCacheType: setCacheType,
-  };
-
-  return ImagePreloaderFactory;
-}());
 
 /* exported featureSupport */
 
@@ -4978,1322 +4046,6 @@ var filtersFactory = (function () {
 
   return ob;
 }());
-
-/* exported assetLoader */
-
-var assetLoader = (function () {
-  function formatResponse(xhr) {
-    if (xhr.response && typeof xhr.response === 'object') {
-      return xhr.response;
-    } if (xhr.response && typeof xhr.response === 'string') {
-      return JSON.parse(xhr.response);
-    } if (xhr.responseText) {
-      return JSON.parse(xhr.responseText);
-    }
-    return null;
-  }
-
-  function loadAsset(path, callback, errorCallback) {
-    var response;
-    var xhr = new XMLHttpRequest();
-    // set responseType after calling open or IE will break.
-    try {
-      // This crashes on Android WebView prior to KitKat
-      xhr.responseType = 'json';
-    } catch (err) {} // eslint-disable-line no-empty
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
-          response = formatResponse(xhr);
-          callback(response);
-        } else {
-          try {
-            response = formatResponse(xhr);
-            callback(response);
-          } catch (err) {
-            if (errorCallback) {
-              errorCallback(err);
-            }
-          }
-        }
-      }
-    };
-    xhr.open('GET', path, true);
-    xhr.send();
-  }
-  return {
-    load: loadAsset,
-  };
-}());
-
-/* global createSizedArray, PropertyFactory, TextAnimatorDataProperty, bez, addHueToRGB,
-  addSaturationToRGB, addBrightnessToRGB, LetterProps, Matrix, extendPrototype, DynamicPropertyContainer */
-
-function TextAnimatorProperty(textData, renderType, elem) {
-  this._isFirstFrame = true;
-  this._hasMaskedPath = false;
-  this._frameId = -1;
-  this._textData = textData;
-  this._renderType = renderType;
-  this._elem = elem;
-  this._animatorsData = createSizedArray(this._textData.a.length);
-  this._pathData = {};
-  this._moreOptions = {
-    alignment: {},
-  };
-  this.renderedLetters = [];
-  this.lettersChangedFlag = false;
-  this.initDynamicPropertyContainer(elem);
-}
-
-TextAnimatorProperty.prototype.searchProperties = function () {
-  var i;
-  var len = this._textData.a.length;
-  var animatorProps;
-  var getProp = PropertyFactory.getProp;
-  for (i = 0; i < len; i += 1) {
-    animatorProps = this._textData.a[i];
-    this._animatorsData[i] = new TextAnimatorDataProperty(this._elem, animatorProps, this);
-  }
-  if (this._textData.p && 'm' in this._textData.p) {
-    this._pathData = {
-      f: getProp(this._elem, this._textData.p.f, 0, 0, this),
-      l: getProp(this._elem, this._textData.p.l, 0, 0, this),
-      r: this._textData.p.r,
-      m: this._elem.maskManager.getMaskProperty(this._textData.p.m),
-    };
-    this._hasMaskedPath = true;
-  } else {
-    this._hasMaskedPath = false;
-  }
-  this._moreOptions.alignment = getProp(this._elem, this._textData.m.a, 1, 0, this);
-};
-
-TextAnimatorProperty.prototype.getMeasures = function (documentData, lettersChangedFlag) {
-  this.lettersChangedFlag = lettersChangedFlag;
-  if (!this._mdf && !this._isFirstFrame && !lettersChangedFlag && (!this._hasMaskedPath || !this._pathData.m._mdf)) {
-    return;
-  }
-  this._isFirstFrame = false;
-  var alignment = this._moreOptions.alignment.v;
-  var animators = this._animatorsData;
-  var textData = this._textData;
-  var matrixHelper = this.mHelper;
-  var renderType = this._renderType;
-  var renderedLettersCount = this.renderedLetters.length;
-  var xPos;
-  var yPos;
-  var i;
-  var len;
-  var letters = documentData.l;
-  var pathInfo;
-  var currentLength;
-  var currentPoint;
-  var segmentLength;
-  var flag;
-  var pointInd;
-  var segmentInd;
-  var prevPoint;
-  var points;
-  var segments;
-  var partialLength;
-  var totalLength;
-  var perc;
-  var tanAngle;
-  var mask;
-  if (this._hasMaskedPath) {
-    mask = this._pathData.m;
-    if (!this._pathData.n || this._pathData._mdf) {
-      var paths = mask.v;
-      if (this._pathData.r) {
-        paths = paths.reverse();
-      }
-      // TODO: release bezier data cached from previous pathInfo: this._pathData.pi
-      pathInfo = {
-        tLength: 0,
-        segments: [],
-      };
-      len = paths._length - 1;
-      var bezierData;
-      totalLength = 0;
-      for (i = 0; i < len; i += 1) {
-        bezierData = bez.buildBezierData(paths.v[i],
-          paths.v[i + 1],
-          [paths.o[i][0] - paths.v[i][0], paths.o[i][1] - paths.v[i][1]],
-          [paths.i[i + 1][0] - paths.v[i + 1][0], paths.i[i + 1][1] - paths.v[i + 1][1]]);
-        pathInfo.tLength += bezierData.segmentLength;
-        pathInfo.segments.push(bezierData);
-        totalLength += bezierData.segmentLength;
-      }
-      i = len;
-      if (mask.v.c) {
-        bezierData = bez.buildBezierData(paths.v[i],
-          paths.v[0],
-          [paths.o[i][0] - paths.v[i][0], paths.o[i][1] - paths.v[i][1]],
-          [paths.i[0][0] - paths.v[0][0], paths.i[0][1] - paths.v[0][1]]);
-        pathInfo.tLength += bezierData.segmentLength;
-        pathInfo.segments.push(bezierData);
-        totalLength += bezierData.segmentLength;
-      }
-      this._pathData.pi = pathInfo;
-    }
-    pathInfo = this._pathData.pi;
-
-    currentLength = this._pathData.f.v;
-    segmentInd = 0;
-    pointInd = 1;
-    segmentLength = 0;
-    flag = true;
-    segments = pathInfo.segments;
-    if (currentLength < 0 && mask.v.c) {
-      if (pathInfo.tLength < Math.abs(currentLength)) {
-        currentLength = -Math.abs(currentLength) % pathInfo.tLength;
-      }
-      segmentInd = segments.length - 1;
-      points = segments[segmentInd].points;
-      pointInd = points.length - 1;
-      while (currentLength < 0) {
-        currentLength += points[pointInd].partialLength;
-        pointInd -= 1;
-        if (pointInd < 0) {
-          segmentInd -= 1;
-          points = segments[segmentInd].points;
-          pointInd = points.length - 1;
-        }
-      }
-    }
-    points = segments[segmentInd].points;
-    prevPoint = points[pointInd - 1];
-    currentPoint = points[pointInd];
-    partialLength = currentPoint.partialLength;
-  }
-
-  len = letters.length;
-  xPos = 0;
-  yPos = 0;
-  var yOff = documentData.finalSize * 1.2 * 0.714;
-  var firstLine = true;
-  var animatorProps;
-  var animatorSelector;
-  var j;
-  var jLen;
-  var letterValue;
-
-  jLen = animators.length;
-
-  var mult;
-  var ind = -1;
-  var offf;
-  var xPathPos;
-  var yPathPos;
-  var initPathPos = currentLength;
-  var initSegmentInd = segmentInd;
-  var initPointInd = pointInd;
-  var currentLine = -1;
-  var elemOpacity;
-  var sc;
-  var sw;
-  var fc;
-  var k;
-  var letterSw;
-  var letterSc;
-  var letterFc;
-  var letterM = '';
-  var letterP = this.defaultPropsArray;
-  var letterO;
-
-  //
-  if (documentData.j === 2 || documentData.j === 1) {
-    var animatorJustifyOffset = 0;
-    var animatorFirstCharOffset = 0;
-    var justifyOffsetMult = documentData.j === 2 ? -0.5 : -1;
-    var lastIndex = 0;
-    var isNewLine = true;
-
-    for (i = 0; i < len; i += 1) {
-      if (letters[i].n) {
-        if (animatorJustifyOffset) {
-          animatorJustifyOffset += animatorFirstCharOffset;
-        }
-        while (lastIndex < i) {
-          letters[lastIndex].animatorJustifyOffset = animatorJustifyOffset;
-          lastIndex += 1;
-        }
-        animatorJustifyOffset = 0;
-        isNewLine = true;
-      } else {
-        for (j = 0; j < jLen; j += 1) {
-          animatorProps = animators[j].a;
-          if (animatorProps.t.propType) {
-            if (isNewLine && documentData.j === 2) {
-              animatorFirstCharOffset += animatorProps.t.v * justifyOffsetMult;
-            }
-            animatorSelector = animators[j].s;
-            mult = animatorSelector.getMult(letters[i].anIndexes[j], textData.a[j].s.totalChars);
-            if (mult.length) {
-              animatorJustifyOffset += animatorProps.t.v * mult[0] * justifyOffsetMult;
-            } else {
-              animatorJustifyOffset += animatorProps.t.v * mult * justifyOffsetMult;
-            }
-          }
-        }
-        isNewLine = false;
-      }
-    }
-    if (animatorJustifyOffset) {
-      animatorJustifyOffset += animatorFirstCharOffset;
-    }
-    while (lastIndex < i) {
-      letters[lastIndex].animatorJustifyOffset = animatorJustifyOffset;
-      lastIndex += 1;
-    }
-  }
-  //
-
-  for (i = 0; i < len; i += 1) {
-    matrixHelper.reset();
-    elemOpacity = 1;
-    if (letters[i].n) {
-      xPos = 0;
-      yPos += documentData.yOffset;
-      yPos += firstLine ? 1 : 0;
-      currentLength = initPathPos;
-      firstLine = false;
-      if (this._hasMaskedPath) {
-        segmentInd = initSegmentInd;
-        pointInd = initPointInd;
-        points = segments[segmentInd].points;
-        prevPoint = points[pointInd - 1];
-        currentPoint = points[pointInd];
-        partialLength = currentPoint.partialLength;
-        segmentLength = 0;
-      }
-      letterM = '';
-      letterFc = '';
-      letterSw = '';
-      letterO = '';
-      letterP = this.defaultPropsArray;
-    } else {
-      if (this._hasMaskedPath) {
-        if (currentLine !== letters[i].line) {
-          switch (documentData.j) {
-            case 1:
-              currentLength += totalLength - documentData.lineWidths[letters[i].line];
-              break;
-            case 2:
-              currentLength += (totalLength - documentData.lineWidths[letters[i].line]) / 2;
-              break;
-            default:
-              break;
-          }
-          currentLine = letters[i].line;
-        }
-        if (ind !== letters[i].ind) {
-          if (letters[ind]) {
-            currentLength += letters[ind].extra;
-          }
-          currentLength += letters[i].an / 2;
-          ind = letters[i].ind;
-        }
-        currentLength += (alignment[0] * letters[i].an) * 0.005;
-        var animatorOffset = 0;
-        for (j = 0; j < jLen; j += 1) {
-          animatorProps = animators[j].a;
-          if (animatorProps.p.propType) {
-            animatorSelector = animators[j].s;
-            mult = animatorSelector.getMult(letters[i].anIndexes[j], textData.a[j].s.totalChars);
-            if (mult.length) {
-              animatorOffset += animatorProps.p.v[0] * mult[0];
-            } else {
-              animatorOffset += animatorProps.p.v[0] * mult;
-            }
-          }
-          if (animatorProps.a.propType) {
-            animatorSelector = animators[j].s;
-            mult = animatorSelector.getMult(letters[i].anIndexes[j], textData.a[j].s.totalChars);
-            if (mult.length) {
-              animatorOffset += animatorProps.a.v[0] * mult[0];
-            } else {
-              animatorOffset += animatorProps.a.v[0] * mult;
-            }
-          }
-        }
-        flag = true;
-        while (flag) {
-          if (segmentLength + partialLength >= currentLength + animatorOffset || !points) {
-            perc = (currentLength + animatorOffset - segmentLength) / currentPoint.partialLength;
-            xPathPos = prevPoint.point[0] + (currentPoint.point[0] - prevPoint.point[0]) * perc;
-            yPathPos = prevPoint.point[1] + (currentPoint.point[1] - prevPoint.point[1]) * perc;
-            matrixHelper.translate((-alignment[0] * letters[i].an) * 0.005, -(alignment[1] * yOff) * 0.01);
-            flag = false;
-          } else if (points) {
-            segmentLength += currentPoint.partialLength;
-            pointInd += 1;
-            if (pointInd >= points.length) {
-              pointInd = 0;
-              segmentInd += 1;
-              if (!segments[segmentInd]) {
-                if (mask.v.c) {
-                  pointInd = 0;
-                  segmentInd = 0;
-                  points = segments[segmentInd].points;
-                } else {
-                  segmentLength -= currentPoint.partialLength;
-                  points = null;
-                }
-              } else {
-                points = segments[segmentInd].points;
-              }
-            }
-            if (points) {
-              prevPoint = currentPoint;
-              currentPoint = points[pointInd];
-              partialLength = currentPoint.partialLength;
-            }
-          }
-        }
-        offf = letters[i].an / 2 - letters[i].add;
-        matrixHelper.translate(-offf, 0, 0);
-      } else {
-        offf = letters[i].an / 2 - letters[i].add;
-        matrixHelper.translate(-offf, 0, 0);
-
-        // Grouping alignment
-        matrixHelper.translate((-alignment[0] * letters[i].an) * 0.005, (-alignment[1] * yOff) * 0.01, 0);
-      }
-
-      for (j = 0; j < jLen; j += 1) {
-        animatorProps = animators[j].a;
-        if (animatorProps.t.propType) {
-          animatorSelector = animators[j].s;
-          mult = animatorSelector.getMult(letters[i].anIndexes[j], textData.a[j].s.totalChars);
-          // This condition is to prevent applying tracking to first character in each line. Might be better to use a boolean "isNewLine"
-          if (xPos !== 0 || documentData.j !== 0) {
-            if (this._hasMaskedPath) {
-              if (mult.length) {
-                currentLength += animatorProps.t.v * mult[0];
-              } else {
-                currentLength += animatorProps.t.v * mult;
-              }
-            } else if (mult.length) {
-              xPos += animatorProps.t.v * mult[0];
-            } else {
-              xPos += animatorProps.t.v * mult;
-            }
-          }
-        }
-      }
-      if (documentData.strokeWidthAnim) {
-        sw = documentData.sw || 0;
-      }
-      if (documentData.strokeColorAnim) {
-        if (documentData.sc) {
-          sc = [documentData.sc[0], documentData.sc[1], documentData.sc[2]];
-        } else {
-          sc = [0, 0, 0];
-        }
-      }
-      if (documentData.fillColorAnim && documentData.fc) {
-        fc = [documentData.fc[0], documentData.fc[1], documentData.fc[2]];
-      }
-      for (j = 0; j < jLen; j += 1) {
-        animatorProps = animators[j].a;
-        if (animatorProps.a.propType) {
-          animatorSelector = animators[j].s;
-          mult = animatorSelector.getMult(letters[i].anIndexes[j], textData.a[j].s.totalChars);
-
-          if (mult.length) {
-            matrixHelper.translate(-animatorProps.a.v[0] * mult[0], -animatorProps.a.v[1] * mult[1], animatorProps.a.v[2] * mult[2]);
-          } else {
-            matrixHelper.translate(-animatorProps.a.v[0] * mult, -animatorProps.a.v[1] * mult, animatorProps.a.v[2] * mult);
-          }
-        }
-      }
-      for (j = 0; j < jLen; j += 1) {
-        animatorProps = animators[j].a;
-        if (animatorProps.s.propType) {
-          animatorSelector = animators[j].s;
-          mult = animatorSelector.getMult(letters[i].anIndexes[j], textData.a[j].s.totalChars);
-          if (mult.length) {
-            matrixHelper.scale(1 + ((animatorProps.s.v[0] - 1) * mult[0]), 1 + ((animatorProps.s.v[1] - 1) * mult[1]), 1);
-          } else {
-            matrixHelper.scale(1 + ((animatorProps.s.v[0] - 1) * mult), 1 + ((animatorProps.s.v[1] - 1) * mult), 1);
-          }
-        }
-      }
-      for (j = 0; j < jLen; j += 1) {
-        animatorProps = animators[j].a;
-        animatorSelector = animators[j].s;
-        mult = animatorSelector.getMult(letters[i].anIndexes[j], textData.a[j].s.totalChars);
-        if (animatorProps.sk.propType) {
-          if (mult.length) {
-            matrixHelper.skewFromAxis(-animatorProps.sk.v * mult[0], animatorProps.sa.v * mult[1]);
-          } else {
-            matrixHelper.skewFromAxis(-animatorProps.sk.v * mult, animatorProps.sa.v * mult);
-          }
-        }
-        if (animatorProps.r.propType) {
-          if (mult.length) {
-            matrixHelper.rotateZ(-animatorProps.r.v * mult[2]);
-          } else {
-            matrixHelper.rotateZ(-animatorProps.r.v * mult);
-          }
-        }
-        if (animatorProps.ry.propType) {
-          if (mult.length) {
-            matrixHelper.rotateY(animatorProps.ry.v * mult[1]);
-          } else {
-            matrixHelper.rotateY(animatorProps.ry.v * mult);
-          }
-        }
-        if (animatorProps.rx.propType) {
-          if (mult.length) {
-            matrixHelper.rotateX(animatorProps.rx.v * mult[0]);
-          } else {
-            matrixHelper.rotateX(animatorProps.rx.v * mult);
-          }
-        }
-        if (animatorProps.o.propType) {
-          if (mult.length) {
-            elemOpacity += ((animatorProps.o.v) * mult[0] - elemOpacity) * mult[0];
-          } else {
-            elemOpacity += ((animatorProps.o.v) * mult - elemOpacity) * mult;
-          }
-        }
-        if (documentData.strokeWidthAnim && animatorProps.sw.propType) {
-          if (mult.length) {
-            sw += animatorProps.sw.v * mult[0];
-          } else {
-            sw += animatorProps.sw.v * mult;
-          }
-        }
-        if (documentData.strokeColorAnim && animatorProps.sc.propType) {
-          for (k = 0; k < 3; k += 1) {
-            if (mult.length) {
-              sc[k] += (animatorProps.sc.v[k] - sc[k]) * mult[0];
-            } else {
-              sc[k] += (animatorProps.sc.v[k] - sc[k]) * mult;
-            }
-          }
-        }
-        if (documentData.fillColorAnim && documentData.fc) {
-          if (animatorProps.fc.propType) {
-            for (k = 0; k < 3; k += 1) {
-              if (mult.length) {
-                fc[k] += (animatorProps.fc.v[k] - fc[k]) * mult[0];
-              } else {
-                fc[k] += (animatorProps.fc.v[k] - fc[k]) * mult;
-              }
-            }
-          }
-          if (animatorProps.fh.propType) {
-            if (mult.length) {
-              fc = addHueToRGB(fc, animatorProps.fh.v * mult[0]);
-            } else {
-              fc = addHueToRGB(fc, animatorProps.fh.v * mult);
-            }
-          }
-          if (animatorProps.fs.propType) {
-            if (mult.length) {
-              fc = addSaturationToRGB(fc, animatorProps.fs.v * mult[0]);
-            } else {
-              fc = addSaturationToRGB(fc, animatorProps.fs.v * mult);
-            }
-          }
-          if (animatorProps.fb.propType) {
-            if (mult.length) {
-              fc = addBrightnessToRGB(fc, animatorProps.fb.v * mult[0]);
-            } else {
-              fc = addBrightnessToRGB(fc, animatorProps.fb.v * mult);
-            }
-          }
-        }
-      }
-
-      for (j = 0; j < jLen; j += 1) {
-        animatorProps = animators[j].a;
-
-        if (animatorProps.p.propType) {
-          animatorSelector = animators[j].s;
-          mult = animatorSelector.getMult(letters[i].anIndexes[j], textData.a[j].s.totalChars);
-          if (this._hasMaskedPath) {
-            if (mult.length) {
-              matrixHelper.translate(0, animatorProps.p.v[1] * mult[0], -animatorProps.p.v[2] * mult[1]);
-            } else {
-              matrixHelper.translate(0, animatorProps.p.v[1] * mult, -animatorProps.p.v[2] * mult);
-            }
-          } else if (mult.length) {
-            matrixHelper.translate(animatorProps.p.v[0] * mult[0], animatorProps.p.v[1] * mult[1], -animatorProps.p.v[2] * mult[2]);
-          } else {
-            matrixHelper.translate(animatorProps.p.v[0] * mult, animatorProps.p.v[1] * mult, -animatorProps.p.v[2] * mult);
-          }
-        }
-      }
-      if (documentData.strokeWidthAnim) {
-        letterSw = sw < 0 ? 0 : sw;
-      }
-      if (documentData.strokeColorAnim) {
-        letterSc = 'rgb(' + Math.round(sc[0] * 255) + ',' + Math.round(sc[1] * 255) + ',' + Math.round(sc[2] * 255) + ')';
-      }
-      if (documentData.fillColorAnim && documentData.fc) {
-        letterFc = 'rgb(' + Math.round(fc[0] * 255) + ',' + Math.round(fc[1] * 255) + ',' + Math.round(fc[2] * 255) + ')';
-      }
-
-      if (this._hasMaskedPath) {
-        matrixHelper.translate(0, -documentData.ls);
-
-        matrixHelper.translate(0, (alignment[1] * yOff) * 0.01 + yPos, 0);
-        if (textData.p.p) {
-          tanAngle = (currentPoint.point[1] - prevPoint.point[1]) / (currentPoint.point[0] - prevPoint.point[0]);
-          var rot = (Math.atan(tanAngle) * 180) / Math.PI;
-          if (currentPoint.point[0] < prevPoint.point[0]) {
-            rot += 180;
-          }
-          matrixHelper.rotate((-rot * Math.PI) / 180);
-        }
-        matrixHelper.translate(xPathPos, yPathPos, 0);
-        currentLength -= (alignment[0] * letters[i].an) * 0.005;
-        if (letters[i + 1] && ind !== letters[i + 1].ind) {
-          currentLength += letters[i].an / 2;
-          currentLength += (documentData.tr * 0.001) * documentData.finalSize;
-        }
-      } else {
-        matrixHelper.translate(xPos, yPos, 0);
-
-        if (documentData.ps) {
-          // matrixHelper.translate(documentData.ps[0],documentData.ps[1],0);
-          matrixHelper.translate(documentData.ps[0], documentData.ps[1] + documentData.ascent, 0);
-        }
-        switch (documentData.j) {
-          case 1:
-            matrixHelper.translate(letters[i].animatorJustifyOffset + documentData.justifyOffset + (documentData.boxWidth - documentData.lineWidths[letters[i].line]), 0, 0);
-            break;
-          case 2:
-            matrixHelper.translate(letters[i].animatorJustifyOffset + documentData.justifyOffset + (documentData.boxWidth - documentData.lineWidths[letters[i].line]) / 2, 0, 0);
-            break;
-          default:
-            break;
-        }
-        matrixHelper.translate(0, -documentData.ls);
-        matrixHelper.translate(offf, 0, 0);
-        matrixHelper.translate((alignment[0] * letters[i].an) * 0.005, (alignment[1] * yOff) * 0.01, 0);
-        xPos += letters[i].l + (documentData.tr * 0.001) * documentData.finalSize;
-      }
-      if (renderType === 'html') {
-        letterM = matrixHelper.toCSS();
-      } else if (renderType === 'svg') {
-        letterM = matrixHelper.to2dCSS();
-      } else {
-        letterP = [matrixHelper.props[0], matrixHelper.props[1], matrixHelper.props[2], matrixHelper.props[3], matrixHelper.props[4], matrixHelper.props[5], matrixHelper.props[6], matrixHelper.props[7], matrixHelper.props[8], matrixHelper.props[9], matrixHelper.props[10], matrixHelper.props[11], matrixHelper.props[12], matrixHelper.props[13], matrixHelper.props[14], matrixHelper.props[15]];
-      }
-      letterO = elemOpacity;
-    }
-
-    if (renderedLettersCount <= i) {
-      letterValue = new LetterProps(letterO, letterSw, letterSc, letterFc, letterM, letterP);
-      this.renderedLetters.push(letterValue);
-      renderedLettersCount += 1;
-      this.lettersChangedFlag = true;
-    } else {
-      letterValue = this.renderedLetters[i];
-      this.lettersChangedFlag = letterValue.update(letterO, letterSw, letterSc, letterFc, letterM, letterP) || this.lettersChangedFlag;
-    }
-  }
-};
-
-TextAnimatorProperty.prototype.getValue = function () {
-  if (this._elem.globalData.frameId === this._frameId) {
-    return;
-  }
-  this._frameId = this._elem.globalData.frameId;
-  this.iterateDynamicProperties();
-};
-
-TextAnimatorProperty.prototype.mHelper = new Matrix();
-TextAnimatorProperty.prototype.defaultPropsArray = [];
-extendPrototype([DynamicPropertyContainer], TextAnimatorProperty);
-
-/* global PropertyFactory, degToRads, TextSelectorProp */
-/* exported TextAnimatorDataProperty */
-
-function TextAnimatorDataProperty(elem, animatorProps, container) {
-  var defaultData = { propType: false };
-  var getProp = PropertyFactory.getProp;
-  var textAnimatorAnimatables = animatorProps.a;
-  this.a = {
-    r: textAnimatorAnimatables.r ? getProp(elem, textAnimatorAnimatables.r, 0, degToRads, container) : defaultData,
-    rx: textAnimatorAnimatables.rx ? getProp(elem, textAnimatorAnimatables.rx, 0, degToRads, container) : defaultData,
-    ry: textAnimatorAnimatables.ry ? getProp(elem, textAnimatorAnimatables.ry, 0, degToRads, container) : defaultData,
-    sk: textAnimatorAnimatables.sk ? getProp(elem, textAnimatorAnimatables.sk, 0, degToRads, container) : defaultData,
-    sa: textAnimatorAnimatables.sa ? getProp(elem, textAnimatorAnimatables.sa, 0, degToRads, container) : defaultData,
-    s: textAnimatorAnimatables.s ? getProp(elem, textAnimatorAnimatables.s, 1, 0.01, container) : defaultData,
-    a: textAnimatorAnimatables.a ? getProp(elem, textAnimatorAnimatables.a, 1, 0, container) : defaultData,
-    o: textAnimatorAnimatables.o ? getProp(elem, textAnimatorAnimatables.o, 0, 0.01, container) : defaultData,
-    p: textAnimatorAnimatables.p ? getProp(elem, textAnimatorAnimatables.p, 1, 0, container) : defaultData,
-    sw: textAnimatorAnimatables.sw ? getProp(elem, textAnimatorAnimatables.sw, 0, 0, container) : defaultData,
-    sc: textAnimatorAnimatables.sc ? getProp(elem, textAnimatorAnimatables.sc, 1, 0, container) : defaultData,
-    fc: textAnimatorAnimatables.fc ? getProp(elem, textAnimatorAnimatables.fc, 1, 0, container) : defaultData,
-    fh: textAnimatorAnimatables.fh ? getProp(elem, textAnimatorAnimatables.fh, 0, 0, container) : defaultData,
-    fs: textAnimatorAnimatables.fs ? getProp(elem, textAnimatorAnimatables.fs, 0, 0.01, container) : defaultData,
-    fb: textAnimatorAnimatables.fb ? getProp(elem, textAnimatorAnimatables.fb, 0, 0.01, container) : defaultData,
-    t: textAnimatorAnimatables.t ? getProp(elem, textAnimatorAnimatables.t, 0, 0, container) : defaultData,
-  };
-
-  this.s = TextSelectorProp.getTextSelectorProp(elem, animatorProps.s, container);
-  this.s.t = animatorProps.s.t;
-}
-
-function LetterProps(o, sw, sc, fc, m, p) {
-  this.o = o;
-  this.sw = sw;
-  this.sc = sc;
-  this.fc = fc;
-  this.m = m;
-  this.p = p;
-  this._mdf = {
-    o: true,
-    sw: !!sw,
-    sc: !!sc,
-    fc: !!fc,
-    m: true,
-    p: true,
-  };
-}
-
-LetterProps.prototype.update = function (o, sw, sc, fc, m, p) {
-  this._mdf.o = false;
-  this._mdf.sw = false;
-  this._mdf.sc = false;
-  this._mdf.fc = false;
-  this._mdf.m = false;
-  this._mdf.p = false;
-  var updated = false;
-
-  if (this.o !== o) {
-    this.o = o;
-    this._mdf.o = true;
-    updated = true;
-  }
-  if (this.sw !== sw) {
-    this.sw = sw;
-    this._mdf.sw = true;
-    updated = true;
-  }
-  if (this.sc !== sc) {
-    this.sc = sc;
-    this._mdf.sc = true;
-    updated = true;
-  }
-  if (this.fc !== fc) {
-    this.fc = fc;
-    this._mdf.fc = true;
-    updated = true;
-  }
-  if (this.m !== m) {
-    this.m = m;
-    this._mdf.m = true;
-    updated = true;
-  }
-  if (p.length && (this.p[0] !== p[0] || this.p[1] !== p[1] || this.p[4] !== p[4] || this.p[5] !== p[5] || this.p[12] !== p[12] || this.p[13] !== p[13])) {
-    this.p = p;
-    this._mdf.p = true;
-    updated = true;
-  }
-  return updated;
-};
-
-/* global FontManager, initialDefaultFrame, getFontProperties */
-/* exported TextProperty */
-
-function TextProperty(elem, data) {
-  this._frameId = initialDefaultFrame;
-  this.pv = '';
-  this.v = '';
-  this.kf = false;
-  this._isFirstFrame = true;
-  this._mdf = false;
-  this.data = data;
-  this.elem = elem;
-  this.comp = this.elem.comp;
-  this.keysIndex = 0;
-  this.canResize = false;
-  this.minimumFontSize = 1;
-  this.effectsSequence = [];
-  this.currentData = {
-    ascent: 0,
-    boxWidth: this.defaultBoxWidth,
-    f: '',
-    fStyle: '',
-    fWeight: '',
-    fc: '',
-    j: '',
-    justifyOffset: '',
-    l: [],
-    lh: 0,
-    lineWidths: [],
-    ls: '',
-    of: '',
-    s: '',
-    sc: '',
-    sw: 0,
-    t: 0,
-    tr: 0,
-    sz: 0,
-    ps: null,
-    fillColorAnim: false,
-    strokeColorAnim: false,
-    strokeWidthAnim: false,
-    yOffset: 0,
-    finalSize: 0,
-    finalText: [],
-    finalLineHeight: 0,
-    __complete: false,
-
-  };
-  this.copyData(this.currentData, this.data.d.k[0].s);
-
-  if (!this.searchProperty()) {
-    this.completeTextData(this.currentData);
-  }
-}
-
-TextProperty.prototype.defaultBoxWidth = [0, 0];
-
-TextProperty.prototype.copyData = function (obj, data) {
-  for (var s in data) {
-    if (Object.prototype.hasOwnProperty.call(data, s)) {
-      obj[s] = data[s];
-    }
-  }
-  return obj;
-};
-
-TextProperty.prototype.setCurrentData = function (data) {
-  if (!data.__complete) {
-    this.completeTextData(data);
-  }
-  this.currentData = data;
-  this.currentData.boxWidth = this.currentData.boxWidth || this.defaultBoxWidth;
-  this._mdf = true;
-};
-
-TextProperty.prototype.searchProperty = function () {
-  return this.searchKeyframes();
-};
-
-TextProperty.prototype.searchKeyframes = function () {
-  this.kf = this.data.d.k.length > 1;
-  if (this.kf) {
-    this.addEffect(this.getKeyframeValue.bind(this));
-  }
-  return this.kf;
-};
-
-TextProperty.prototype.addEffect = function (effectFunction) {
-  this.effectsSequence.push(effectFunction);
-  this.elem.addDynamicProperty(this);
-};
-
-TextProperty.prototype.getValue = function (_finalValue) {
-  if ((this.elem.globalData.frameId === this.frameId || !this.effectsSequence.length) && !_finalValue) {
-    return;
-  }
-  this.currentData.t = this.data.d.k[this.keysIndex].s.t;
-  var currentValue = this.currentData;
-  var currentIndex = this.keysIndex;
-  if (this.lock) {
-    this.setCurrentData(this.currentData);
-    return;
-  }
-  this.lock = true;
-  this._mdf = false;
-  var i; var
-    len = this.effectsSequence.length;
-  var finalValue = _finalValue || this.data.d.k[this.keysIndex].s;
-  for (i = 0; i < len; i += 1) {
-    // Checking if index changed to prevent creating a new object every time the expression updates.
-    if (currentIndex !== this.keysIndex) {
-      finalValue = this.effectsSequence[i](finalValue, finalValue.t);
-    } else {
-      finalValue = this.effectsSequence[i](this.currentData, finalValue.t);
-    }
-  }
-  if (currentValue !== finalValue) {
-    this.setCurrentData(finalValue);
-  }
-  this.v = this.currentData;
-  this.pv = this.v;
-  this.lock = false;
-  this.frameId = this.elem.globalData.frameId;
-};
-
-TextProperty.prototype.getKeyframeValue = function () {
-  var textKeys = this.data.d.k;
-  var frameNum = this.elem.comp.renderedFrame;
-  var i = 0; var
-    len = textKeys.length;
-  while (i <= len - 1) {
-    if (i === len - 1 || textKeys[i + 1].t > frameNum) {
-      break;
-    }
-    i += 1;
-  }
-  if (this.keysIndex !== i) {
-    this.keysIndex = i;
-  }
-  return this.data.d.k[this.keysIndex].s;
-};
-
-TextProperty.prototype.buildFinalText = function (text) {
-  var charactersArray = [];
-  var i = 0;
-  var len = text.length;
-  var charCode;
-  var secondCharCode;
-  var shouldCombine = false;
-  while (i < len) {
-    charCode = text.charCodeAt(i);
-    if (FontManager.isCombinedCharacter(charCode)) {
-      charactersArray[charactersArray.length - 1] += text.charAt(i);
-    } else if (charCode >= 0xD800 && charCode <= 0xDBFF) {
-      secondCharCode = text.charCodeAt(i + 1);
-      if (secondCharCode >= 0xDC00 && secondCharCode <= 0xDFFF) {
-        if (shouldCombine || FontManager.isModifier(charCode, secondCharCode)) {
-          charactersArray[charactersArray.length - 1] += text.substr(i, 2);
-          shouldCombine = false;
-        } else {
-          charactersArray.push(text.substr(i, 2));
-        }
-        i += 1;
-      } else {
-        charactersArray.push(text.charAt(i));
-      }
-    } else if (charCode > 0xDBFF) {
-      secondCharCode = text.charCodeAt(i + 1);
-      if (FontManager.isZeroWidthJoiner(charCode, secondCharCode)) {
-        shouldCombine = true;
-        charactersArray[charactersArray.length - 1] += text.substr(i, 2);
-        i += 1;
-      } else {
-        charactersArray.push(text.charAt(i));
-      }
-    } else if (FontManager.isZeroWidthJoiner(charCode)) {
-      charactersArray[charactersArray.length - 1] += text.charAt(i);
-      shouldCombine = true;
-    } else {
-      charactersArray.push(text.charAt(i));
-    }
-    i += 1;
-  }
-  return charactersArray;
-};
-
-TextProperty.prototype.completeTextData = function (documentData) {
-  documentData.__complete = true;
-  var fontManager = this.elem.globalData.fontManager;
-  var data = this.data;
-  var letters = [];
-  var i; var
-    len;
-  var newLineFlag; var index = 0; var
-    val;
-  var anchorGrouping = data.m.g;
-  var currentSize = 0; var currentPos = 0; var currentLine = 0; var
-    lineWidths = [];
-  var lineWidth = 0;
-  var maxLineWidth = 0;
-  var j; var
-    jLen;
-  var fontData = fontManager.getFontByName(documentData.f);
-  var charData; var
-    cLength = 0;
-
-  var fontProps = getFontProperties(fontData);
-  documentData.fWeight = fontProps.weight;
-  documentData.fStyle = fontProps.style;
-  documentData.finalSize = documentData.s;
-  documentData.finalText = this.buildFinalText(documentData.t);
-  len = documentData.finalText.length;
-  documentData.finalLineHeight = documentData.lh;
-  var trackingOffset = (documentData.tr / 1000) * documentData.finalSize;
-  var charCode;
-  if (documentData.sz) {
-    var flag = true;
-    var boxWidth = documentData.sz[0];
-    var boxHeight = documentData.sz[1];
-    var currentHeight; var
-      finalText;
-    while (flag) {
-      finalText = this.buildFinalText(documentData.t);
-      currentHeight = 0;
-      lineWidth = 0;
-      len = finalText.length;
-      trackingOffset = (documentData.tr / 1000) * documentData.finalSize;
-      var lastSpaceIndex = -1;
-      for (i = 0; i < len; i += 1) {
-        charCode = finalText[i].charCodeAt(0);
-        newLineFlag = false;
-        if (finalText[i] === ' ') {
-          lastSpaceIndex = i;
-        } else if (charCode === 13 || charCode === 3) {
-          lineWidth = 0;
-          newLineFlag = true;
-          currentHeight += documentData.finalLineHeight || documentData.finalSize * 1.2;
-        }
-        if (fontManager.chars) {
-          charData = fontManager.getCharData(finalText[i], fontData.fStyle, fontData.fFamily);
-          cLength = newLineFlag ? 0 : (charData.w * documentData.finalSize) / 100;
-        } else {
-          // tCanvasHelper.font = documentData.s + 'px '+ fontData.fFamily;
-          cLength = fontManager.measureText(finalText[i], documentData.f, documentData.finalSize);
-        }
-        if (lineWidth + cLength > boxWidth && finalText[i] !== ' ') {
-          if (lastSpaceIndex === -1) {
-            len += 1;
-          } else {
-            i = lastSpaceIndex;
-          }
-          currentHeight += documentData.finalLineHeight || documentData.finalSize * 1.2;
-          finalText.splice(i, lastSpaceIndex === i ? 1 : 0, '\r');
-          // finalText = finalText.substr(0,i) + "\r" + finalText.substr(i === lastSpaceIndex ? i + 1 : i);
-          lastSpaceIndex = -1;
-          lineWidth = 0;
-        } else {
-          lineWidth += cLength;
-          lineWidth += trackingOffset;
-        }
-      }
-      currentHeight += (fontData.ascent * documentData.finalSize) / 100;
-      if (this.canResize && documentData.finalSize > this.minimumFontSize && boxHeight < currentHeight) {
-        documentData.finalSize -= 1;
-        documentData.finalLineHeight = (documentData.finalSize * documentData.lh) / documentData.s;
-      } else {
-        documentData.finalText = finalText;
-        len = documentData.finalText.length;
-        flag = false;
-      }
-    }
-  }
-  lineWidth = -trackingOffset;
-  cLength = 0;
-  var uncollapsedSpaces = 0;
-  var currentChar;
-  for (i = 0; i < len; i += 1) {
-    newLineFlag = false;
-    currentChar = documentData.finalText[i];
-    charCode = currentChar.charCodeAt(0);
-    if (charCode === 13 || charCode === 3) {
-      uncollapsedSpaces = 0;
-      lineWidths.push(lineWidth);
-      maxLineWidth = lineWidth > maxLineWidth ? lineWidth : maxLineWidth;
-      lineWidth = -2 * trackingOffset;
-      val = '';
-      newLineFlag = true;
-      currentLine += 1;
-    } else {
-      val = currentChar;
-    }
-    if (fontManager.chars) {
-      charData = fontManager.getCharData(currentChar, fontData.fStyle, fontManager.getFontByName(documentData.f).fFamily);
-      cLength = newLineFlag ? 0 : (charData.w * documentData.finalSize) / 100;
-    } else {
-      // var charWidth = fontManager.measureText(val, documentData.f, documentData.finalSize);
-      // tCanvasHelper.font = documentData.finalSize + 'px '+ fontManager.getFontByName(documentData.f).fFamily;
-      cLength = fontManager.measureText(val, documentData.f, documentData.finalSize);
-    }
-
-    //
-    if (currentChar === ' ') {
-      uncollapsedSpaces += cLength + trackingOffset;
-    } else {
-      lineWidth += cLength + trackingOffset + uncollapsedSpaces;
-      uncollapsedSpaces = 0;
-    }
-    letters.push({
-      l: cLength, an: cLength, add: currentSize, n: newLineFlag, anIndexes: [], val: val, line: currentLine, animatorJustifyOffset: 0,
-    });
-    if (anchorGrouping == 2) { // eslint-disable-line eqeqeq
-      currentSize += cLength;
-      if (val === '' || val === ' ' || i === len - 1) {
-        if (val === '' || val === ' ') {
-          currentSize -= cLength;
-        }
-        while (currentPos <= i) {
-          letters[currentPos].an = currentSize;
-          letters[currentPos].ind = index;
-          letters[currentPos].extra = cLength;
-          currentPos += 1;
-        }
-        index += 1;
-        currentSize = 0;
-      }
-    } else if (anchorGrouping == 3) { // eslint-disable-line eqeqeq
-      currentSize += cLength;
-      if (val === '' || i === len - 1) {
-        if (val === '') {
-          currentSize -= cLength;
-        }
-        while (currentPos <= i) {
-          letters[currentPos].an = currentSize;
-          letters[currentPos].ind = index;
-          letters[currentPos].extra = cLength;
-          currentPos += 1;
-        }
-        currentSize = 0;
-        index += 1;
-      }
-    } else {
-      letters[index].ind = index;
-      letters[index].extra = 0;
-      index += 1;
-    }
-  }
-  documentData.l = letters;
-  maxLineWidth = lineWidth > maxLineWidth ? lineWidth : maxLineWidth;
-  lineWidths.push(lineWidth);
-  if (documentData.sz) {
-    documentData.boxWidth = documentData.sz[0];
-    documentData.justifyOffset = 0;
-  } else {
-    documentData.boxWidth = maxLineWidth;
-    switch (documentData.j) {
-      case 1:
-        documentData.justifyOffset = -documentData.boxWidth;
-        break;
-      case 2:
-        documentData.justifyOffset = -documentData.boxWidth / 2;
-        break;
-      default:
-        documentData.justifyOffset = 0;
-    }
-  }
-  documentData.lineWidths = lineWidths;
-
-  var animators = data.a; var animatorData; var
-    letterData;
-  jLen = animators.length;
-  var based; var ind; var
-    indexes = [];
-  for (j = 0; j < jLen; j += 1) {
-    animatorData = animators[j];
-    if (animatorData.a.sc) {
-      documentData.strokeColorAnim = true;
-    }
-    if (animatorData.a.sw) {
-      documentData.strokeWidthAnim = true;
-    }
-    if (animatorData.a.fc || animatorData.a.fh || animatorData.a.fs || animatorData.a.fb) {
-      documentData.fillColorAnim = true;
-    }
-    ind = 0;
-    based = animatorData.s.b;
-    for (i = 0; i < len; i += 1) {
-      letterData = letters[i];
-      letterData.anIndexes[j] = ind;
-      if ((based == 1 && letterData.val !== '') || (based == 2 && letterData.val !== '' && letterData.val !== ' ') || (based == 3 && (letterData.n || letterData.val == ' ' || i == len - 1)) || (based == 4 && (letterData.n || i == len - 1))) { // eslint-disable-line eqeqeq
-        if (animatorData.s.rn === 1) {
-          indexes.push(ind);
-        }
-        ind += 1;
-      }
-    }
-    data.a[j].s.totalChars = ind;
-    var currentInd = -1; var
-      newInd;
-    if (animatorData.s.rn === 1) {
-      for (i = 0; i < len; i += 1) {
-        letterData = letters[i];
-        if (currentInd != letterData.anIndexes[j]) { // eslint-disable-line eqeqeq
-          currentInd = letterData.anIndexes[j];
-          newInd = indexes.splice(Math.floor(Math.random() * indexes.length), 1)[0];
-        }
-        letterData.anIndexes[j] = newInd;
-      }
-    }
-  }
-  documentData.yOffset = documentData.finalLineHeight || documentData.finalSize * 1.2;
-  documentData.ls = documentData.ls || 0;
-  documentData.ascent = (fontData.ascent * documentData.finalSize) / 100;
-};
-
-TextProperty.prototype.updateDocumentData = function (newData, index) {
-  index = index === undefined ? this.keysIndex : index;
-  var dData = this.copyData({}, this.data.d.k[index].s);
-  dData = this.copyData(dData, newData);
-  this.data.d.k[index].s = dData;
-  this.recalculate(index);
-  this.elem.addDynamicProperty(this);
-};
-
-TextProperty.prototype.recalculate = function (index) {
-  var dData = this.data.d.k[index].s;
-  dData.__complete = false;
-  this.keysIndex = 0;
-  this._isFirstFrame = true;
-  this.getValue(dData);
-};
-
-TextProperty.prototype.canResizeFont = function (_canResize) {
-  this.canResize = _canResize;
-  this.recalculate(this.keysIndex);
-  this.elem.addDynamicProperty(this);
-};
-
-TextProperty.prototype.setMinimumFontSize = function (_fontValue) {
-  this.minimumFontSize = Math.floor(_fontValue) || 1;
-  this.recalculate(this.keysIndex);
-  this.elem.addDynamicProperty(this);
-};
-
-/* global extendPrototype, BezierFactory, PropertyFactory, DynamicPropertyContainer */
-/* exported TextSelectorProp */
-
-var TextSelectorProp = (function () {
-  var max = Math.max;
-  var min = Math.min;
-  var floor = Math.floor;
-
-  function TextSelectorPropFactory(elem, data) {
-    this._currentTextLength = -1;
-    this.k = false;
-    this.data = data;
-    this.elem = elem;
-    this.comp = elem.comp;
-    this.finalS = 0;
-    this.finalE = 0;
-    this.initDynamicPropertyContainer(elem);
-    this.s = PropertyFactory.getProp(elem, data.s || { k: 0 }, 0, 0, this);
-    if ('e' in data) {
-      this.e = PropertyFactory.getProp(elem, data.e, 0, 0, this);
-    } else {
-      this.e = { v: 100 };
-    }
-    this.o = PropertyFactory.getProp(elem, data.o || { k: 0 }, 0, 0, this);
-    this.xe = PropertyFactory.getProp(elem, data.xe || { k: 0 }, 0, 0, this);
-    this.ne = PropertyFactory.getProp(elem, data.ne || { k: 0 }, 0, 0, this);
-    this.a = PropertyFactory.getProp(elem, data.a, 0, 0.01, this);
-    if (!this.dynamicProperties.length) {
-      this.getValue();
-    }
-  }
-
-  TextSelectorPropFactory.prototype = {
-    getMult: function (ind) {
-      if (this._currentTextLength !== this.elem.textProperty.currentData.l.length) {
-        this.getValue();
-      }
-      // var easer = bez.getEasingCurve(this.ne.v/100,0,1-this.xe.v/100,1);
-      var x1 = 0;
-      var y1 = 0;
-      var x2 = 1;
-      var y2 = 1;
-      if (this.ne.v > 0) {
-        x1 = this.ne.v / 100.0;
-      } else {
-        y1 = -this.ne.v / 100.0;
-      }
-      if (this.xe.v > 0) {
-        x2 = 1.0 - this.xe.v / 100.0;
-      } else {
-        y2 = 1.0 + this.xe.v / 100.0;
-      }
-      var easer = BezierFactory.getBezierEasing(x1, y1, x2, y2).get;
-
-      var mult = 0;
-      var s = this.finalS;
-      var e = this.finalE;
-      var type = this.data.sh;
-      if (type === 2) {
-        if (e === s) {
-          mult = ind >= e ? 1 : 0;
-        } else {
-          mult = max(0, min(0.5 / (e - s) + (ind - s) / (e - s), 1));
-        }
-        mult = easer(mult);
-      } else if (type === 3) {
-        if (e === s) {
-          mult = ind >= e ? 0 : 1;
-        } else {
-          mult = 1 - max(0, min(0.5 / (e - s) + (ind - s) / (e - s), 1));
-        }
-
-        mult = easer(mult);
-      } else if (type === 4) {
-        if (e === s) {
-          mult = 0;
-        } else {
-          mult = max(0, min(0.5 / (e - s) + (ind - s) / (e - s), 1));
-          if (mult < 0.5) {
-            mult *= 2;
-          } else {
-            mult = 1 - 2 * (mult - 0.5);
-          }
-        }
-        mult = easer(mult);
-      } else if (type === 5) {
-        if (e === s) {
-          mult = 0;
-        } else {
-          var tot = e - s;
-          /* ind += 0.5;
-                    mult = -4/(tot*tot)*(ind*ind)+(4/tot)*ind; */
-          ind = min(max(0, ind + 0.5 - s), e - s);
-          var x = -tot / 2 + ind;
-          var a = tot / 2;
-          mult = Math.sqrt(1 - (x * x) / (a * a));
-        }
-        mult = easer(mult);
-      } else if (type === 6) {
-        if (e === s) {
-          mult = 0;
-        } else {
-          ind = min(max(0, ind + 0.5 - s), e - s);
-          mult = (1 + (Math.cos((Math.PI + Math.PI * 2 * (ind) / (e - s))))) / 2; // eslint-disable-line
-        }
-        mult = easer(mult);
-      } else {
-        if (ind >= floor(s)) {
-          if (ind - s < 0) {
-            mult = max(0, min(min(e, 1) - (s - ind), 1));
-          } else {
-            mult = max(0, min(e - ind, 1));
-          }
-        }
-        mult = easer(mult);
-      }
-      return mult * this.a.v;
-    },
-    getValue: function (newCharsFlag) {
-      this.iterateDynamicProperties();
-      this._mdf = newCharsFlag || this._mdf;
-      this._currentTextLength = this.elem.textProperty.currentData.l.length || 0;
-      if (newCharsFlag && this.data.r === 2) {
-        this.e.v = this._currentTextLength;
-      }
-      var divisor = this.data.r === 2 ? 1 : 100 / this.data.totalChars;
-      var o = this.o.v / divisor;
-      var s = this.s.v / divisor + o;
-      var e = (this.e.v / divisor) + o;
-      if (s > e) {
-        var _s = s;
-        s = e;
-        e = _s;
-      }
-      this.finalS = s;
-      this.finalE = e;
-    },
-  };
-  extendPrototype([DynamicPropertyContainer], TextSelectorPropFactory);
-
-  function getTextSelectorProp(elem, data, arr) {
-    return new TextSelectorPropFactory(elem, data, arr);
-  }
-
-  return {
-    getTextSelectorProp: getTextSelectorProp,
-  };
-}());
-
 /* global createSizedArray, pooling */
 /* exported poolFactory */
 
@@ -6528,7 +4280,7 @@ var markerParser = (
     };
   }());
 
-/* global AudioElement, FootageElement, FontManager */
+/* global, FootageElement */
 
 function BaseRenderer() {}
 BaseRenderer.prototype.checkLayers = function (num) {
@@ -6550,22 +4302,12 @@ BaseRenderer.prototype.checkLayers = function (num) {
 
 BaseRenderer.prototype.createItem = function (layer) {
   switch (layer.ty) {
-    case 2:
-      return this.createImage(layer);
     case 0:
       return this.createComp(layer);
-    case 1:
-      return this.createSolid(layer);
     case 3:
       return this.createNull(layer);
     case 4:
       return this.createShape(layer);
-    case 5:
-      return this.createText(layer);
-    case 6:
-      return this.createAudio(layer);
-    case 13:
-      return this.createCamera(layer);
     case 15:
       return this.createFootage(layer);
     default:
@@ -6573,13 +4315,6 @@ BaseRenderer.prototype.createItem = function (layer) {
   }
 };
 
-BaseRenderer.prototype.createCamera = function () {
-  throw new Error('You\'re using a 3d camera. Try the html renderer.');
-};
-
-BaseRenderer.prototype.createAudio = function (data) {
-  return new AudioElement(data, this.globalData, this);
-};
 
 BaseRenderer.prototype.createFootage = function (data) {
   return new FootageElement(data, this.globalData, this);
@@ -6662,13 +4397,7 @@ BaseRenderer.prototype.searchExtraCompositions = function (assets) {
 };
 
 BaseRenderer.prototype.setupGlobalData = function (animData, fontsContainer) {
-  this.globalData.fontManager = new FontManager();
-  this.globalData.fontManager.addChars(animData.chars);
-  this.globalData.fontManager.addFonts(animData.fonts, fontsContainer);
   this.globalData.getAssetData = this.animationItem.getAssetData.bind(this.animationItem);
-  this.globalData.getAssetsPath = this.animationItem.getAssetsPath.bind(this.animationItem);
-  this.globalData.imageLoader = this.animationItem.imagePreloader;
-  this.globalData.audioController = this.animationItem.audioController;
   this.globalData.frameId = 0;
   this.globalData.frameRate = animData.fr;
   this.globalData.nm = animData.nm;
@@ -6678,8 +4407,7 @@ BaseRenderer.prototype.setupGlobalData = function (animData, fontsContainer) {
   };
 };
 
-/* global createElementID, extendPrototype, BaseRenderer, NullElement, SVGShapeElement, SVGTextLottieElement,
-IImageElement, SVGCompElement, ISolidElement, createNS, locationHref, createSizedArray, expressionsPlugin */
+/* global createElementID, extendPrototype, BaseRenderer, NullElement, SVGShapeElement, SVGCompElement, createNS, locationHref, createSizedArray, */
 
 function SVGRenderer(animationItem, config) {
   this.animationItem = animationItem;
@@ -6713,7 +4441,6 @@ function SVGRenderer(animationItem, config) {
   this.layerElement = maskElement;
   this.renderConfig = {
     preserveAspectRatio: (config && config.preserveAspectRatio) || 'xMidYMid meet',
-    imagePreserveAspectRatio: (config && config.imagePreserveAspectRatio) || 'xMidYMid slice',
     progressiveLoad: (config && config.progressiveLoad) || false,
     hideOnTransparent: !((config && config.hideOnTransparent === false)),
     viewBoxOnly: (config && config.viewBoxOnly) || false,
@@ -6751,20 +4478,9 @@ SVGRenderer.prototype.createShape = function (data) {
   return new SVGShapeElement(data, this.globalData, this);
 };
 
-SVGRenderer.prototype.createText = function (data) {
-  return new SVGTextLottieElement(data, this.globalData, this);
-};
-
-SVGRenderer.prototype.createImage = function (data) {
-  return new IImageElement(data, this.globalData, this);
-};
 
 SVGRenderer.prototype.createComp = function (data) {
   return new SVGCompElement(data, this.globalData, this);
-};
-
-SVGRenderer.prototype.createSolid = function (data) {
-  return new ISolidElement(data, this.globalData, this);
 };
 
 SVGRenderer.prototype.configAnimation = function (animData) {
@@ -6848,12 +4564,6 @@ SVGRenderer.prototype.buildItem = function (pos) {
   var element = this.createItem(this.layers[pos]);
 
   elements[pos] = element;
-  if (expressionsPlugin) {
-    if (this.layers[pos].ty === 0) {
-      this.globalData.projectInterface.registerComposition(element);
-    }
-    element.initExpressions();
-  }
   this.appendElementInPos(element, pos);
   if (this.layers[pos].tt) {
     if (!this.elements[pos - 1] || this.elements[pos - 1] === true) {
@@ -6943,235 +4653,6 @@ SVGRenderer.prototype.hide = function () {
 
 SVGRenderer.prototype.show = function () {
   this.layerElement.style.display = 'block';
-};
-
-/* global createSizedArray, createElementID, PropertyFactory, ShapePropertyFactory, createNS, locationHref */
-
-function MaskElement(data, element, globalData) {
-  this.data = data;
-  this.element = element;
-  this.globalData = globalData;
-  this.storedData = [];
-  this.masksProperties = this.data.masksProperties || [];
-  this.maskElement = null;
-  var defs = this.globalData.defs;
-  var i;
-  var len = this.masksProperties ? this.masksProperties.length : 0;
-  this.viewData = createSizedArray(len);
-  this.solidPath = '';
-
-  var path;
-  var properties = this.masksProperties;
-  var count = 0;
-  var currentMasks = [];
-  var j;
-  var jLen;
-  var layerId = createElementID();
-  var rect;
-  var expansor;
-  var feMorph;
-  var x;
-  var maskType = 'clipPath';
-  var maskRef = 'clip-path';
-  for (i = 0; i < len; i += 1) {
-    if ((properties[i].mode !== 'a' && properties[i].mode !== 'n') || properties[i].inv || properties[i].o.k !== 100 || properties[i].o.x) {
-      maskType = 'mask';
-      maskRef = 'mask';
-    }
-
-    if ((properties[i].mode === 's' || properties[i].mode === 'i') && count === 0) {
-      rect = createNS('rect');
-      rect.setAttribute('fill', '#ffffff');
-      rect.setAttribute('width', this.element.comp.data.w || 0);
-      rect.setAttribute('height', this.element.comp.data.h || 0);
-      currentMasks.push(rect);
-    } else {
-      rect = null;
-    }
-
-    path = createNS('path');
-    if (properties[i].mode === 'n') {
-      // TODO move this to a factory or to a constructor
-      this.viewData[i] = {
-        op: PropertyFactory.getProp(this.element, properties[i].o, 0, 0.01, this.element),
-        prop: ShapePropertyFactory.getShapeProp(this.element, properties[i], 3),
-        elem: path,
-        lastPath: '',
-      };
-      defs.appendChild(path);
-    } else {
-      count += 1;
-
-      path.setAttribute('fill', properties[i].mode === 's' ? '#000000' : '#ffffff');
-      path.setAttribute('clip-rule', 'nonzero');
-      var filterID;
-
-      if (properties[i].x.k !== 0) {
-        maskType = 'mask';
-        maskRef = 'mask';
-        x = PropertyFactory.getProp(this.element, properties[i].x, 0, null, this.element);
-        filterID = createElementID();
-        expansor = createNS('filter');
-        expansor.setAttribute('id', filterID);
-        feMorph = createNS('feMorphology');
-        feMorph.setAttribute('operator', 'erode');
-        feMorph.setAttribute('in', 'SourceGraphic');
-        feMorph.setAttribute('radius', '0');
-        expansor.appendChild(feMorph);
-        defs.appendChild(expansor);
-        path.setAttribute('stroke', properties[i].mode === 's' ? '#000000' : '#ffffff');
-      } else {
-        feMorph = null;
-        x = null;
-      }
-
-      // TODO move this to a factory or to a constructor
-      this.storedData[i] = {
-        elem: path,
-        x: x,
-        expan: feMorph,
-        lastPath: '',
-        lastOperator: '',
-        filterId: filterID,
-        lastRadius: 0,
-      };
-      if (properties[i].mode === 'i') {
-        jLen = currentMasks.length;
-        var g = createNS('g');
-        for (j = 0; j < jLen; j += 1) {
-          g.appendChild(currentMasks[j]);
-        }
-        var mask = createNS('mask');
-        mask.setAttribute('mask-type', 'alpha');
-        mask.setAttribute('id', layerId + '_' + count);
-        mask.appendChild(path);
-        defs.appendChild(mask);
-        g.setAttribute('mask', 'url(' + locationHref + '#' + layerId + '_' + count + ')');
-
-        currentMasks.length = 0;
-        currentMasks.push(g);
-      } else {
-        currentMasks.push(path);
-      }
-      if (properties[i].inv && !this.solidPath) {
-        this.solidPath = this.createLayerSolidPath();
-      }
-      // TODO move this to a factory or to a constructor
-      this.viewData[i] = {
-        elem: path,
-        lastPath: '',
-        op: PropertyFactory.getProp(this.element, properties[i].o, 0, 0.01, this.element),
-        prop: ShapePropertyFactory.getShapeProp(this.element, properties[i], 3),
-        invRect: rect,
-      };
-      if (!this.viewData[i].prop.k) {
-        this.drawPath(properties[i], this.viewData[i].prop.v, this.viewData[i]);
-      }
-    }
-  }
-
-  this.maskElement = createNS(maskType);
-
-  len = currentMasks.length;
-  for (i = 0; i < len; i += 1) {
-    this.maskElement.appendChild(currentMasks[i]);
-  }
-
-  if (count > 0) {
-    this.maskElement.setAttribute('id', layerId);
-    this.element.maskedElement.setAttribute(maskRef, 'url(' + locationHref + '#' + layerId + ')');
-    defs.appendChild(this.maskElement);
-  }
-  if (this.viewData.length) {
-    this.element.addRenderableComponent(this);
-  }
-}
-
-MaskElement.prototype.getMaskProperty = function (pos) {
-  return this.viewData[pos].prop;
-};
-
-MaskElement.prototype.renderFrame = function (isFirstFrame) {
-  var finalMat = this.element.finalTransform.mat;
-  var i;
-  var len = this.masksProperties.length;
-  for (i = 0; i < len; i += 1) {
-    if (this.viewData[i].prop._mdf || isFirstFrame) {
-      this.drawPath(this.masksProperties[i], this.viewData[i].prop.v, this.viewData[i]);
-    }
-    if (this.viewData[i].op._mdf || isFirstFrame) {
-      this.viewData[i].elem.setAttribute('fill-opacity', this.viewData[i].op.v);
-    }
-    if (this.masksProperties[i].mode !== 'n') {
-      if (this.viewData[i].invRect && (this.element.finalTransform.mProp._mdf || isFirstFrame)) {
-        this.viewData[i].invRect.setAttribute('transform', finalMat.getInverseMatrix().to2dCSS());
-      }
-      if (this.storedData[i].x && (this.storedData[i].x._mdf || isFirstFrame)) {
-        var feMorph = this.storedData[i].expan;
-        if (this.storedData[i].x.v < 0) {
-          if (this.storedData[i].lastOperator !== 'erode') {
-            this.storedData[i].lastOperator = 'erode';
-            this.storedData[i].elem.setAttribute('filter', 'url(' + locationHref + '#' + this.storedData[i].filterId + ')');
-          }
-          feMorph.setAttribute('radius', -this.storedData[i].x.v);
-        } else {
-          if (this.storedData[i].lastOperator !== 'dilate') {
-            this.storedData[i].lastOperator = 'dilate';
-            this.storedData[i].elem.setAttribute('filter', null);
-          }
-          this.storedData[i].elem.setAttribute('stroke-width', this.storedData[i].x.v * 2);
-        }
-      }
-    }
-  }
-};
-
-MaskElement.prototype.getMaskelement = function () {
-  return this.maskElement;
-};
-
-MaskElement.prototype.createLayerSolidPath = function () {
-  var path = 'M0,0 ';
-  path += ' h' + this.globalData.compSize.w;
-  path += ' v' + this.globalData.compSize.h;
-  path += ' h-' + this.globalData.compSize.w;
-  path += ' v-' + this.globalData.compSize.h + ' ';
-  return path;
-};
-
-MaskElement.prototype.drawPath = function (pathData, pathNodes, viewData) {
-  var pathString = ' M' + pathNodes.v[0][0] + ',' + pathNodes.v[0][1];
-  var i;
-  var len;
-  len = pathNodes._length;
-  for (i = 1; i < len; i += 1) {
-    // pathString += " C"+pathNodes.o[i-1][0]+','+pathNodes.o[i-1][1] + " "+pathNodes.i[i][0]+','+pathNodes.i[i][1] + " "+pathNodes.v[i][0]+','+pathNodes.v[i][1];
-    pathString += ' C' + pathNodes.o[i - 1][0] + ',' + pathNodes.o[i - 1][1] + ' ' + pathNodes.i[i][0] + ',' + pathNodes.i[i][1] + ' ' + pathNodes.v[i][0] + ',' + pathNodes.v[i][1];
-  }
-  // pathString += " C"+pathNodes.o[i-1][0]+','+pathNodes.o[i-1][1] + " "+pathNodes.i[0][0]+','+pathNodes.i[0][1] + " "+pathNodes.v[0][0]+','+pathNodes.v[0][1];
-  if (pathNodes.c && len > 1) {
-    pathString += ' C' + pathNodes.o[i - 1][0] + ',' + pathNodes.o[i - 1][1] + ' ' + pathNodes.i[0][0] + ',' + pathNodes.i[0][1] + ' ' + pathNodes.v[0][0] + ',' + pathNodes.v[0][1];
-  }
-  // pathNodes.__renderedString = pathString;
-
-  if (viewData.lastPath !== pathString) {
-    var pathShapeValue = '';
-    if (viewData.elem) {
-      if (pathNodes.c) {
-        pathShapeValue = pathData.inv ? this.solidPath + pathString : pathString;
-      }
-      viewData.elem.setAttribute('d', pathShapeValue);
-    }
-    viewData.lastPath = pathString;
-  }
-};
-
-MaskElement.prototype.destroy = function () {
-  this.element = null;
-  this.globalData = null;
-  this.maskElement = null;
-  this.data = null;
-  this.masksProperties = null;
 };
 
 /**
@@ -7290,9 +4771,6 @@ TransformElement.prototype = {
       _opMdf: false,
       mat: new Matrix(),
     };
-    if (this.data.ao) {
-      this.finalTransform.mProp.autoOriented = true;
-    }
 
     // TODO: check TYPE 11: Guided elements
     if (this.data.ty !== 11) {
@@ -7336,9 +4814,6 @@ TransformElement.prototype = {
     var comp = this.comp;
     while (flag) {
       if (comp.finalTransform) {
-        if (comp.data.hasMask) {
-          transforms.splice(0, 0, comp.finalTransform);
-        }
         comp = comp.comp;
       } else {
         flag = false;
@@ -7424,8 +4899,6 @@ RenderableElement.prototype = {
     for (i = 0; i < len; i += 1) {
       this.renderableComponents[i].renderFrame(this._isFirstFrame);
     }
-    /* this.maskManager.renderFrame(this.finalTransform.mat);
-        this.renderableEffectsManager.renderFrame(this._isFirstFrame); */
   },
   sourceRectAtTime: function () {
     return {
@@ -7599,7 +5072,7 @@ function SVGFillStyleData(elem, data, styleOb) {
 extendPrototype([DynamicPropertyContainer], SVGFillStyleData);
 
 /* global PropertyFactory, degToRads, GradientProperty, createElementID, createNS, locationHref,
-extendPrototype, DynamicPropertyContainer, lineCapEnum, lineJoinEnum */
+extendPrototype, DynamicPropertyContainer */
 
 function SVGGradientFillStyleData(elem, data, styleOb) {
   this.initDynamicPropertyContainer(elem);
@@ -7638,6 +5111,7 @@ SVGGradientFillStyleData.prototype.setGradientData = function (pathElement, data
     stops.push(stop);
   }
   pathElement.setAttribute(data.ty === 'gf' ? 'fill' : 'stroke', 'url(' + locationHref + '#' + gradientId + ')');
+
   this.gf = gfill;
   this.cst = stops;
 };
@@ -7666,13 +5140,6 @@ SVGGradientFillStyleData.prototype.setGradientOpacity = function (data, styleOb)
       stops.push(stop);
     }
     maskElement.setAttribute(data.ty === 'gf' ? 'fill' : 'stroke', 'url(' + locationHref + '#' + opacityId + ')');
-    if (data.ty === 'gs') {
-      maskElement.setAttribute('stroke-linecap', lineCapEnum[data.lc || 2]);
-      maskElement.setAttribute('stroke-linejoin', lineJoinEnum[data.lj || 2]);
-      if (data.lj === 1) {
-        maskElement.setAttribute('stroke-miterlimit', data.ml);
-      }
-    }
     this.of = opFill;
     this.ms = mask;
     this.ost = stops;
@@ -7722,8 +5189,7 @@ var SVGElementsRenderer = (function () {
         return renderFill;
       case 'gf':
         return renderGradient;
-      case 'gs':
-        return renderGradientStroke;
+      case 'gs':;
       case 'st':
         return renderStroke;
       case 'sh':
@@ -7815,10 +5281,7 @@ var SVGElementsRenderer = (function () {
     }
   }
 
-  function renderGradientStroke(styleData, itemData, isFirstFrame) {
-    renderGradient(styleData, itemData, isFirstFrame);
-    renderStroke(styleData, itemData, isFirstFrame);
-  }
+
 
   function renderGradient(styleData, itemData, isFirstFrame) {
     var gfill = itemData.gf;
@@ -8001,31 +5464,14 @@ ShapeTransformManager.prototype = {
 };
 
 /* global LayerExpressionInterface, EffectsExpressionInterface, CompExpressionInterface, ShapeExpressionInterface,
-TextExpressionInterface, getBlendMode,createElementID, EffectsManager */
+TextExpressionInterface, getBlendMode,createElementID */
 
 function BaseElement() {
 }
 
 BaseElement.prototype = {
-  checkMasks: function () {
-    if (!this.data.hasMask) {
-      return false;
-    }
-    var i = 0;
-    var len = this.data.masksProperties.length;
-    while (i < len) {
-      if ((this.data.masksProperties[i].mode !== 'n' && this.data.masksProperties[i].cl !== false)) {
-        return true;
-      }
-      i += 1;
-    }
-    return false;
-  },
   initExpressions: function () {
     this.layerInterface = LayerExpressionInterface(this);
-    if (this.data.hasMask && this.maskManager) {
-      this.layerInterface.registerMaskInterface(this.maskManager);
-    }
     var effectsInterface = EffectsExpressionInterface.createEffectsInterface(this, this.layerInterface);
     this.layerInterface.registerEffectsInterface(effectsInterface);
 
@@ -8034,10 +5480,7 @@ BaseElement.prototype = {
     } else if (this.data.ty === 4) {
       this.layerInterface.shapeInterface = ShapeExpressionInterface(this.shapesData, this.itemsData, this.layerInterface);
       this.layerInterface.content = this.layerInterface.shapeInterface;
-    } else if (this.data.ty === 5) {
-      this.layerInterface.textInterface = TextExpressionInterface(this);
-      this.layerInterface.text = this.layerInterface.textInterface;
-    }
+    } 
   },
   setBlendMode: function () {
     var blendModeValue = getBlendMode(this.data.bm);
@@ -8055,8 +5498,7 @@ BaseElement.prototype = {
     if (!this.data.sr) {
       this.data.sr = 1;
     }
-    // effects manager
-    this.effectsManager = new EffectsManager(this.data, this, this.dynamicProperties);
+    
   },
   getType: function () {
     return this.type;
@@ -8096,7 +5538,7 @@ NullElement.prototype.hide = function () {
 
 extendPrototype([BaseElement, TransformElement, HierarchyElement, FrameElement], NullElement);
 
-/* global filtersFactory, featureSupport, filtersFactory, createElementID, createNS, MaskElement, SVGEffects, locationHref */
+/* global filtersFactory, featureSupport, filtersFactory, createElementID, createNS, SVGEffects, locationHref */
 
 function SVGBaseElement() {
 }
@@ -8108,7 +5550,6 @@ SVGBaseElement.prototype = {
   createContainerElements: function () {
     this.matteElement = createNS('g');
     this.transformedElement = this.layerElement;
-    this.maskedElement = this.layerElement;
     this._sizeChanged = false;
     var layerElementParent = null;
     // If this layer acts as a mask for the following layer
@@ -8207,19 +5648,8 @@ SVGBaseElement.prototype = {
       cp.appendChild(pt);
       this.globalData.defs.appendChild(cp);
 
-      if (this.checkMasks()) {
-        var cpGroup = createNS('g');
-        cpGroup.setAttribute('clip-path', 'url(' + locationHref + '#' + clipId + ')');
-        cpGroup.appendChild(this.layerElement);
-        this.transformedElement = cpGroup;
-        if (layerElementParent) {
-          layerElementParent.appendChild(this.transformedElement);
-        } else {
-          this.baseElement = this.transformedElement;
-        }
-      } else {
+     
         this.layerElement.setAttribute('clip-path', 'url(' + locationHref + '#' + clipId + ')');
-      }
     }
     if (this.data.bm !== 0) {
       this.setBlendMode();
@@ -8236,7 +5666,7 @@ SVGBaseElement.prototype = {
   destroyBaseElement: function () {
     this.layerElement = null;
     this.matteElement = null;
-    this.maskManager.destroy();
+
   },
   getBaseElement: function () {
     if (this.data.hd) {
@@ -8245,8 +5675,7 @@ SVGBaseElement.prototype = {
     return this.baseElement;
   },
   createRenderableComponents: function () {
-    this.maskManager = new MaskElement(this.data, this, this.globalData);
-    this.renderableEffectsManager = new SVGEffects(this);
+    
   },
   setMatte: function (id) {
     if (!this.matteElement) {
@@ -8296,11 +5725,21 @@ IShapeElement.prototype = {
       // workaround to fix cases where a repeater resets the shape so the following processes get called twice
       // TODO: find a better solution for this
       if (shouldBreakProcess) {
+        console.log("")
         break;
       }
     }
   },
-
+  lcEnum: {
+    1: 'butt',
+    2: 'round',
+    3: 'square',
+  },
+  ljEnum: {
+    1: 'miter',
+    2: 'round',
+    3: 'bevel',
+  },
   searchProcessedElement: function (elem) {
     var elements = this.processedElements;
     var i = 0;
@@ -8331,91 +5770,6 @@ IShapeElement.prototype = {
   },
 };
 
-/* global TextProperty, TextAnimatorProperty, buildShapeString, LetterProps */
-
-function ITextElement() {
-}
-
-ITextElement.prototype.initElement = function (data, globalData, comp) {
-  this.lettersChangedFlag = true;
-  this.initFrame();
-  this.initBaseData(data, globalData, comp);
-  this.textProperty = new TextProperty(this, data.t, this.dynamicProperties);
-  this.textAnimator = new TextAnimatorProperty(data.t, this.renderType, this);
-  this.initTransform(data, globalData, comp);
-  this.initHierarchy();
-  this.initRenderable();
-  this.initRendererElement();
-  this.createContainerElements();
-  this.createRenderableComponents();
-  this.createContent();
-  this.hide();
-  this.textAnimator.searchProperties(this.dynamicProperties);
-};
-
-ITextElement.prototype.prepareFrame = function (num) {
-  this._mdf = false;
-  this.prepareRenderableFrame(num);
-  this.prepareProperties(num, this.isInRange);
-  if (this.textProperty._mdf || this.textProperty._isFirstFrame) {
-    this.buildNewText();
-    this.textProperty._isFirstFrame = false;
-    this.textProperty._mdf = false;
-  }
-};
-
-ITextElement.prototype.createPathShape = function (matrixHelper, shapes) {
-  var j;
-  var jLen = shapes.length;
-  var pathNodes;
-  var shapeStr = '';
-  for (j = 0; j < jLen; j += 1) {
-    pathNodes = shapes[j].ks.k;
-    shapeStr += buildShapeString(pathNodes, pathNodes.i.length, true, matrixHelper);
-  }
-  return shapeStr;
-};
-
-ITextElement.prototype.updateDocumentData = function (newData, index) {
-  this.textProperty.updateDocumentData(newData, index);
-};
-
-ITextElement.prototype.canResizeFont = function (_canResize) {
-  this.textProperty.canResizeFont(_canResize);
-};
-
-ITextElement.prototype.setMinimumFontSize = function (_fontSize) {
-  this.textProperty.setMinimumFontSize(_fontSize);
-};
-
-ITextElement.prototype.applyTextPropertiesToMatrix = function (documentData, matrixHelper, lineNumber, xPos, yPos) {
-  if (documentData.ps) {
-    matrixHelper.translate(documentData.ps[0], documentData.ps[1] + documentData.ascent, 0);
-  }
-  matrixHelper.translate(0, -documentData.ls, 0);
-  switch (documentData.j) {
-    case 1:
-      matrixHelper.translate(documentData.justifyOffset + (documentData.boxWidth - documentData.lineWidths[lineNumber]), 0, 0);
-      break;
-    case 2:
-      matrixHelper.translate(documentData.justifyOffset + (documentData.boxWidth - documentData.lineWidths[lineNumber]) / 2, 0, 0);
-      break;
-    default:
-      break;
-  }
-  matrixHelper.translate(xPos, yPos, 0);
-};
-
-ITextElement.prototype.buildColor = function (colorData) {
-  return 'rgb(' + Math.round(colorData[0] * 255) + ',' + Math.round(colorData[1] * 255) + ',' + Math.round(colorData[2] * 255) + ')';
-};
-
-ITextElement.prototype.emptyProp = new LetterProps();
-
-ITextElement.prototype.destroy = function () {
-
-};
-
 /* global extendPrototype, BaseElement, TransformElement, HierarchyElement, FrameElement, RenderableDOMElement */
 
 function ICompElement() {}
@@ -8437,17 +5791,6 @@ ICompElement.prototype.initElement = function (data, globalData, comp) {
   this.hide();
 };
 
-/* ICompElement.prototype.hide = function(){
-    if(!this.hidden){
-        this.hideElement();
-        var i,len = this.elements.length;
-        for( i = 0; i < len; i+=1 ){
-            if(this.elements[i]){
-                this.elements[i].hide();
-            }
-        }
-    }
-}; */
 
 ICompElement.prototype.prepareFrame = function (num) {
   this._mdf = false;
@@ -8517,132 +5860,8 @@ ICompElement.prototype.destroy = function () {
 
 /* global extendPrototype, BaseElement, TransformElement, SVGBaseElement, HierarchyElement, FrameElement, RenderableDOMElement, createNS */
 
-function IImageElement(data, globalData, comp) {
-  this.assetData = globalData.getAssetData(data.refId);
-  this.initElement(data, globalData, comp);
-  this.sourceRect = {
-    top: 0, left: 0, width: this.assetData.w, height: this.assetData.h,
-  };
-}
-
-extendPrototype([BaseElement, TransformElement, SVGBaseElement, HierarchyElement, FrameElement, RenderableDOMElement], IImageElement);
-
-IImageElement.prototype.createContent = function () {
-  var assetPath = this.globalData.getAssetsPath(this.assetData);
-
-  this.innerElem = createNS('image');
-  this.innerElem.setAttribute('width', this.assetData.w + 'px');
-  this.innerElem.setAttribute('height', this.assetData.h + 'px');
-  this.innerElem.setAttribute('preserveAspectRatio', this.assetData.pr || this.globalData.renderConfig.imagePreserveAspectRatio);
-  this.innerElem.setAttributeNS('http://www.w3.org/1999/xlink', 'href', assetPath);
-
-  this.layerElement.appendChild(this.innerElem);
-};
-
-IImageElement.prototype.sourceRectAtTime = function () {
-  return this.sourceRect;
-};
-
-/* global extendPrototype, IImageElement, createNS */
-
-function ISolidElement(data, globalData, comp) {
-  this.initElement(data, globalData, comp);
-}
-extendPrototype([IImageElement], ISolidElement);
-
-ISolidElement.prototype.createContent = function () {
-  var rect = createNS('rect');
-  /// /rect.style.width = this.data.sw;
-  /// /rect.style.height = this.data.sh;
-  /// /rect.style.fill = this.data.sc;
-  rect.setAttribute('width', this.data.sw);
-  rect.setAttribute('height', this.data.sh);
-  rect.setAttribute('fill', this.data.sc);
-  this.layerElement.appendChild(rect);
-};
 
 /* global PropertyFactory, extendPrototype, RenderableElement, BaseElement, FrameElement */
-
-function AudioElement(data, globalData, comp) {
-  this.initFrame();
-  this.initRenderable();
-  this.assetData = globalData.getAssetData(data.refId);
-  this.initBaseData(data, globalData, comp);
-  this._isPlaying = false;
-  this._canPlay = false;
-  var assetPath = this.globalData.getAssetsPath(this.assetData);
-  this.audio = this.globalData.audioController.createAudio(assetPath);
-  this._currentTime = 0;
-  this.globalData.audioController.addAudio(this);
-  this.tm = data.tm ? PropertyFactory.getProp(this, data.tm, 0, globalData.frameRate, this) : { _placeholder: true };
-}
-
-AudioElement.prototype.prepareFrame = function (num) {
-  this.prepareRenderableFrame(num, true);
-  this.prepareProperties(num, true);
-  if (!this.tm._placeholder) {
-    var timeRemapped = this.tm.v;
-    this._currentTime = timeRemapped;
-  } else {
-    this._currentTime = num / this.data.sr;
-  }
-};
-
-extendPrototype([RenderableElement, BaseElement, FrameElement], AudioElement);
-
-AudioElement.prototype.renderFrame = function () {
-  if (this.isInRange && this._canPlay) {
-    if (!this._isPlaying) {
-      this.audio.play();
-      this.audio.seek(this._currentTime / this.globalData.frameRate);
-      this._isPlaying = true;
-    } else if (!this.audio.playing()
-      || Math.abs(this._currentTime / this.globalData.frameRate - this.audio.seek()) > 0.1
-    ) {
-      this.audio.seek(this._currentTime / this.globalData.frameRate);
-    }
-  }
-};
-
-AudioElement.prototype.show = function () {
-  // this.audio.play()
-};
-
-AudioElement.prototype.hide = function () {
-  this.audio.pause();
-  this._isPlaying = false;
-};
-
-AudioElement.prototype.pause = function () {
-  this.audio.pause();
-  this._isPlaying = false;
-  this._canPlay = false;
-};
-
-AudioElement.prototype.resume = function () {
-  this._canPlay = true;
-};
-
-AudioElement.prototype.setRate = function (rateValue) {
-  this.audio.rate(rateValue);
-};
-
-AudioElement.prototype.volume = function (volumeValue) {
-  this.audio.volume(volumeValue);
-};
-
-AudioElement.prototype.getBaseElement = function () {
-  return null;
-};
-
-AudioElement.prototype.destroy = function () {
-};
-
-AudioElement.prototype.sourceRectAtTime = function () {
-};
-
-AudioElement.prototype.initExpressions = function () {
-};
 
 /* global createSizedArray, PropertyFactory, extendPrototype, SVGRenderer, ICompElement, SVGBaseElement */
 
@@ -8660,233 +5879,13 @@ function SVGCompElement(data, globalData, comp) {
 extendPrototype([SVGRenderer, ICompElement, SVGBaseElement], SVGCompElement);
 
 /* global extendPrototype, BaseElement, TransformElement, SVGBaseElement, HierarchyElement, FrameElement,
-RenderableDOMElement, ITextElement, createSizedArray, createNS */
+RenderableDOMElement, createSizedArray, createNS */
 
-function SVGTextLottieElement(data, globalData, comp) {
-  this.textSpans = [];
-  this.renderType = 'svg';
-  this.initElement(data, globalData, comp);
-}
-
-extendPrototype([BaseElement, TransformElement, SVGBaseElement, HierarchyElement, FrameElement, RenderableDOMElement, ITextElement], SVGTextLottieElement);
-
-SVGTextLottieElement.prototype.createContent = function () {
-  if (this.data.singleShape && !this.globalData.fontManager.chars) {
-    this.textContainer = createNS('text');
-  }
-};
-
-SVGTextLottieElement.prototype.buildTextContents = function (textArray) {
-  var i = 0;
-  var len = textArray.length;
-  var textContents = [];
-  var currentTextContent = '';
-  while (i < len) {
-    if (textArray[i] === String.fromCharCode(13) || textArray[i] === String.fromCharCode(3)) {
-      textContents.push(currentTextContent);
-      currentTextContent = '';
-    } else {
-      currentTextContent += textArray[i];
-    }
-    i += 1;
-  }
-  textContents.push(currentTextContent);
-  return textContents;
-};
-
-SVGTextLottieElement.prototype.buildNewText = function () {
-  var i;
-  var len;
-
-  var documentData = this.textProperty.currentData;
-  this.renderedLetters = createSizedArray(documentData ? documentData.l.length : 0);
-  if (documentData.fc) {
-    this.layerElement.setAttribute('fill', this.buildColor(documentData.fc));
-  } else {
-    this.layerElement.setAttribute('fill', 'rgba(0,0,0,0)');
-  }
-  if (documentData.sc) {
-    this.layerElement.setAttribute('stroke', this.buildColor(documentData.sc));
-    this.layerElement.setAttribute('stroke-width', documentData.sw);
-  }
-  this.layerElement.setAttribute('font-size', documentData.finalSize);
-  var fontData = this.globalData.fontManager.getFontByName(documentData.f);
-  if (fontData.fClass) {
-    this.layerElement.setAttribute('class', fontData.fClass);
-  } else {
-    this.layerElement.setAttribute('font-family', fontData.fFamily);
-    var fWeight = documentData.fWeight;
-    var fStyle = documentData.fStyle;
-    this.layerElement.setAttribute('font-style', fStyle);
-    this.layerElement.setAttribute('font-weight', fWeight);
-  }
-  this.layerElement.setAttribute('aria-label', documentData.t);
-
-  var letters = documentData.l || [];
-  var usesGlyphs = !!this.globalData.fontManager.chars;
-  len = letters.length;
-
-  var tSpan;
-  var matrixHelper = this.mHelper;
-  var shapes;
-  var shapeStr = '';
-  var singleShape = this.data.singleShape;
-  var xPos = 0;
-  var yPos = 0;
-  var firstLine = true;
-  var trackingOffset = documentData.tr * 0.001 * documentData.finalSize;
-  if (singleShape && !usesGlyphs && !documentData.sz) {
-    var tElement = this.textContainer;
-    var justify = 'start';
-    switch (documentData.j) {
-      case 1:
-        justify = 'end';
-        break;
-      case 2:
-        justify = 'middle';
-        break;
-      default:
-        justify = 'start';
-        break;
-    }
-    tElement.setAttribute('text-anchor', justify);
-    tElement.setAttribute('letter-spacing', trackingOffset);
-    var textContent = this.buildTextContents(documentData.finalText);
-    len = textContent.length;
-    yPos = documentData.ps ? documentData.ps[1] + documentData.ascent : 0;
-    for (i = 0; i < len; i += 1) {
-      tSpan = this.textSpans[i] || createNS('tspan');
-      tSpan.textContent = textContent[i];
-      tSpan.setAttribute('x', 0);
-      tSpan.setAttribute('y', yPos);
-      tSpan.style.display = 'inherit';
-      tElement.appendChild(tSpan);
-      this.textSpans[i] = tSpan;
-      yPos += documentData.finalLineHeight;
-    }
-
-    this.layerElement.appendChild(tElement);
-  } else {
-    var cachedSpansLength = this.textSpans.length;
-    var shapeData;
-    var charData;
-    for (i = 0; i < len; i += 1) {
-      if (!usesGlyphs || !singleShape || i === 0) {
-        tSpan = cachedSpansLength > i ? this.textSpans[i] : createNS(usesGlyphs ? 'path' : 'text');
-        if (cachedSpansLength <= i) {
-          tSpan.setAttribute('stroke-linecap', 'butt');
-          tSpan.setAttribute('stroke-linejoin', 'round');
-          tSpan.setAttribute('stroke-miterlimit', '4');
-          this.textSpans[i] = tSpan;
-          this.layerElement.appendChild(tSpan);
-        }
-        tSpan.style.display = 'inherit';
-      }
-
-      matrixHelper.reset();
-      matrixHelper.scale(documentData.finalSize / 100, documentData.finalSize / 100);
-      if (singleShape) {
-        if (letters[i].n) {
-          xPos = -trackingOffset;
-          yPos += documentData.yOffset;
-          yPos += firstLine ? 1 : 0;
-          firstLine = false;
-        }
-        this.applyTextPropertiesToMatrix(documentData, matrixHelper, letters[i].line, xPos, yPos);
-        xPos += letters[i].l || 0;
-        // xPos += letters[i].val === ' ' ? 0 : trackingOffset;
-        xPos += trackingOffset;
-      }
-      if (usesGlyphs) {
-        charData = this.globalData.fontManager.getCharData(documentData.finalText[i], fontData.fStyle, this.globalData.fontManager.getFontByName(documentData.f).fFamily);
-        shapeData = (charData && charData.data) || {};
-        shapes = shapeData.shapes ? shapeData.shapes[0].it : [];
-        if (!singleShape) {
-          tSpan.setAttribute('d', this.createPathShape(matrixHelper, shapes));
-        } else {
-          shapeStr += this.createPathShape(matrixHelper, shapes);
-        }
-      } else {
-        if (singleShape) {
-          tSpan.setAttribute('transform', 'translate(' + matrixHelper.props[12] + ',' + matrixHelper.props[13] + ')');
-        }
-        tSpan.textContent = letters[i].val;
-        tSpan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
-      }
-      //
-    }
-    if (singleShape && tSpan) {
-      tSpan.setAttribute('d', shapeStr);
-    }
-  }
-  while (i < this.textSpans.length) {
-    this.textSpans[i].style.display = 'none';
-    i += 1;
-  }
-
-  this._sizeChanged = true;
-};
-
-SVGTextLottieElement.prototype.sourceRectAtTime = function () {
-  this.prepareFrame(this.comp.renderedFrame - this.data.st);
-  this.renderInnerContent();
-  if (this._sizeChanged) {
-    this._sizeChanged = false;
-    var textBox = this.layerElement.getBBox();
-    this.bbox = {
-      top: textBox.y,
-      left: textBox.x,
-      width: textBox.width,
-      height: textBox.height,
-    };
-  }
-  return this.bbox;
-};
-
-SVGTextLottieElement.prototype.renderInnerContent = function () {
-  if (!this.data.singleShape) {
-    this.textAnimator.getMeasures(this.textProperty.currentData, this.lettersChangedFlag);
-    if (this.lettersChangedFlag || this.textAnimator.lettersChangedFlag) {
-      this._sizeChanged = true;
-      var i;
-      var len;
-      var renderedLetters = this.textAnimator.renderedLetters;
-
-      var letters = this.textProperty.currentData.l;
-
-      len = letters.length;
-      var renderedLetter;
-      var textSpan;
-      for (i = 0; i < len; i += 1) {
-        if (!letters[i].n) {
-          renderedLetter = renderedLetters[i];
-          textSpan = this.textSpans[i];
-          if (renderedLetter._mdf.m) {
-            textSpan.setAttribute('transform', renderedLetter.m);
-          }
-          if (renderedLetter._mdf.o) {
-            textSpan.setAttribute('opacity', renderedLetter.o);
-          }
-          if (renderedLetter._mdf.sw) {
-            textSpan.setAttribute('stroke-width', renderedLetter.sw);
-          }
-          if (renderedLetter._mdf.sc) {
-            textSpan.setAttribute('stroke', renderedLetter.sc);
-          }
-          if (renderedLetter._mdf.fc) {
-            textSpan.setAttribute('fill', renderedLetter.fc);
-          }
-        }
-      }
-    }
-  }
-};
 
 /* global extendPrototype, BaseElement, TransformElement, SVGBaseElement, IShapeElement, HierarchyElement,
 FrameElement, RenderableDOMElement, Matrix, SVGStyleData, SVGStrokeStyleData, SVGFillStyleData,
 SVGGradientFillStyleData, SVGGradientStrokeStyleData, locationHref, getBlendMode, ShapeGroupData,
-TransformPropertyFactory, SVGTransformData, ShapePropertyFactory, SVGShapeData, SVGElementsRenderer, ShapeModifiers,
-lineCapEnum, lineJoinEnum */
+TransformPropertyFactory, SVGTransformData, ShapePropertyFactory, SVGShapeData, SVGElementsRenderer, ShapeModifiers */
 
 function SVGShapeElement(data, globalData, comp) {
   // List of drawable elements
@@ -8975,16 +5974,11 @@ SVGShapeElement.prototype.createStyleElement = function (data, level) {
     var GradientConstructor = data.ty === 'gf' ? SVGGradientFillStyleData : SVGGradientStrokeStyleData;
     elementData = new GradientConstructor(this, data, styleOb);
     this.globalData.defs.appendChild(elementData.gf);
-    if (elementData.maskId) {
-      this.globalData.defs.appendChild(elementData.ms);
-      this.globalData.defs.appendChild(elementData.of);
-      pathElement.setAttribute('mask', 'url(' + locationHref + '#' + elementData.maskId + ')');
-    }
   }
 
   if (data.ty === 'st' || data.ty === 'gs') {
-    pathElement.setAttribute('stroke-linecap', lineCapEnum[data.lc || 2]);
-    pathElement.setAttribute('stroke-linejoin', lineJoinEnum[data.lj || 2]);
+    pathElement.setAttribute('stroke-linecap', this.lcEnum[data.lc] || 'round');
+    pathElement.setAttribute('stroke-linejoin', this.ljEnum[data.lj] || 'round');
     pathElement.setAttribute('fill-opacity', '0');
     if (data.lj === 1) {
       pathElement.setAttribute('stroke-miterlimit', data.ml);
@@ -9087,7 +6081,7 @@ SVGShapeElement.prototype.reloadShapes = function () {
   for (i = 0; i < len; i += 1) {
     this.dynamicProperties[i].getValue();
   }
-  this.renderModifiers();
+  // this.renderModifiers();
 };
 
 SVGShapeElement.prototype.searchShapes = function (arr, itemsData, prevViewData, container, level, transformers, render) {
@@ -9330,15 +6324,9 @@ SVGStrokeEffect.prototype.initialize = function () {
   var elemChildren = this.elem.layerElement.children || this.elem.layerElement.childNodes;
   var path;
   var groupPath;
-  var i;
-  var len;
-  if (this.filterManager.effectElements[1].p.v === 1) {
-    len = this.elem.maskManager.masksProperties.length;
-    i = 0;
-  } else {
-    i = this.filterManager.effectElements[0].p.v - 1;
-    len = i + 1;
-  }
+  var i = this.filterManager.effectElements[0].p.v - 1;
+  var len = i + 1;
+
   groupPath = createNS('g');
   groupPath.setAttribute('fill', 'none');
   groupPath.setAttribute('stroke-linecap', 'round');
@@ -9384,16 +6372,12 @@ SVGStrokeEffect.prototype.renderFrame = function (forceRender) {
   }
   var i;
   var len = this.paths.length;
-  var mask;
+
   var path;
   for (i = 0; i < len; i += 1) {
     if (this.paths[i].m !== -1) {
-      mask = this.elem.maskManager.viewData[this.paths[i].m];
       path = this.paths[i].p;
-      if (forceRender || this.filterManager._mdf || mask.prop._mdf) {
-        path.setAttribute('d', mask.lastPath);
-      }
-      if (forceRender || this.filterManager.effectElements[9].p._mdf || this.filterManager.effectElements[4].p._mdf || this.filterManager.effectElements[7].p._mdf || this.filterManager.effectElements[8].p._mdf || mask.prop._mdf) {
+      if (forceRender || this.filterManager.effectElements[9].p._mdf || this.filterManager.effectElements[4].p._mdf || this.filterManager.effectElements[7].p._mdf || this.filterManager.effectElements[8].p._mdf) {
         var dasharrayValue;
         if (this.filterManager.effectElements[7].p.v !== 0 || this.filterManager.effectElements[8].p.v !== 100) {
           var s = Math.min(this.filterManager.effectElements[7].p.v, this.filterManager.effectElements[8].p.v) * 0.01;
@@ -9780,40 +6764,12 @@ var animationManager = (function () {
         registeredAnimations.splice(i, 1);
         i -= 1;
         len -= 1;
-        if (!animItem.isPaused) {
-          subtractPlayingCount();
-        }
+        subtractPlayingCount();
       }
       i += 1;
     }
   }
 
-  function registerAnimation(element, animationData) {
-    if (!element) {
-      return null;
-    }
-    var i = 0;
-    while (i < len) {
-      if (registeredAnimations[i].elem === element && registeredAnimations[i].elem !== null) {
-        return registeredAnimations[i].animation;
-      }
-      i += 1;
-    }
-    var animItem = new AnimationItem();
-    setupAnimation(animItem, element);
-    animItem.setData(element, animationData);
-    return animItem;
-  }
-
-  function getRegisteredAnimations() {
-    var i;
-    var lenAnims = registeredAnimations.length;
-    var animations = [];
-    for (i = 0; i < lenAnims; i += 1) {
-      animations.push(registeredAnimations[i].animation);
-    }
-    return animations;
-  }
 
   function addPlayingCount() {
     playingAnimationsNum += 1;
@@ -9839,19 +6795,6 @@ var animationManager = (function () {
     return animItem;
   }
 
-  function setSpeed(val, animation) {
-    var i;
-    for (i = 0; i < len; i += 1) {
-      registeredAnimations[i].animation.setSpeed(val, animation);
-    }
-  }
-
-  function setDirection(val, animation) {
-    var i;
-    for (i = 0; i < len; i += 1) {
-      registeredAnimations[i].animation.setDirection(val, animation);
-    }
-  }
 
   function play(animation) {
     var i;
@@ -9878,64 +6821,11 @@ var animationManager = (function () {
     window.requestAnimationFrame(resume);
   }
 
-  function pause(animation) {
-    var i;
-    for (i = 0; i < len; i += 1) {
-      registeredAnimations[i].animation.pause(animation);
-    }
-  }
-
-  function goToAndStop(value, isFrame, animation) {
-    var i;
-    for (i = 0; i < len; i += 1) {
-      registeredAnimations[i].animation.goToAndStop(value, isFrame, animation);
-    }
-  }
-
-  function stop(animation) {
-    var i;
-    for (i = 0; i < len; i += 1) {
-      registeredAnimations[i].animation.stop(animation);
-    }
-  }
-
-  function togglePause(animation) {
-    var i;
-    for (i = 0; i < len; i += 1) {
-      registeredAnimations[i].animation.togglePause(animation);
-    }
-  }
 
   function destroy(animation) {
     var i;
     for (i = (len - 1); i >= 0; i -= 1) {
       registeredAnimations[i].animation.destroy(animation);
-    }
-  }
-
-  function searchAnimations(animationData, standalone, renderer) {
-    var animElements = [].concat([].slice.call(document.getElementsByClassName('lottie')),
-      [].slice.call(document.getElementsByClassName('bodymovin')));
-    var i;
-    var lenAnims = animElements.length;
-    for (i = 0; i < lenAnims; i += 1) {
-      if (renderer) {
-        animElements[i].setAttribute('data-bm-type', renderer);
-      }
-      registerAnimation(animElements[i], animationData);
-    }
-    if (standalone && lenAnims === 0) {
-      if (!renderer) {
-        renderer = 'svg';
-      }
-      var body = document.getElementsByTagName('body')[0];
-      body.innerText = '';
-      var div = createTag('div');
-      div.style.width = '100%';
-      div.style.height = '100%';
-      div.setAttribute('data-bm-type', renderer);
-      body.appendChild(div);
-      registerAnimation(div, animationData);
     }
   }
 
@@ -9964,51 +6854,19 @@ var animationManager = (function () {
     activate();
   }
 
-  function setVolume(val, animation) {
-    var i;
-    for (i = 0; i < len; i += 1) {
-      registeredAnimations[i].animation.setVolume(val, animation);
-    }
-  }
-
-  function mute(animation) {
-    var i;
-    for (i = 0; i < len; i += 1) {
-      registeredAnimations[i].animation.mute(animation);
-    }
-  }
-
-  function unmute(animation) {
-    var i;
-    for (i = 0; i < len; i += 1) {
-      registeredAnimations[i].animation.unmute(animation);
-    }
-  }
-
-  moduleOb.registerAnimation = registerAnimation;
   moduleOb.loadAnimation = loadAnimation;
-  moduleOb.setSpeed = setSpeed;
-  moduleOb.setDirection = setDirection;
   moduleOb.play = play;
-  moduleOb.pause = pause;
   moduleOb.stop = stop;
-  moduleOb.togglePause = togglePause;
-  moduleOb.searchAnimations = searchAnimations;
   moduleOb.resize = resize;
   // moduleOb.start = start;
-  moduleOb.goToAndStop = goToAndStop;
   moduleOb.destroy = destroy;
   moduleOb.freeze = freeze;
   moduleOb.unfreeze = unfreeze;
-  moduleOb.setVolume = setVolume;
-  moduleOb.mute = mute;
-  moduleOb.unmute = unmute;
-  moduleOb.getRegisteredAnimations = getRegisteredAnimations;
   return moduleOb;
 }());
 
-/* global createElementID, subframeEnabled, ProjectInterface, ImagePreloader, audioControllerFactory, extendPrototype, BaseEvent,
-CanvasRenderer, SVGRenderer, HybridRenderer, assetLoader, dataManager, expressionsPlugin, BMEnterFrameEvent, BMCompleteLoopEvent,
+/* global createElementID, subframeEnabled, ProjectInterface, extendPrototype, BaseEvent,
+CanvasRenderer, SVGRenderer, HybridRenderer, dataManager, BMEnterFrameEvent, BMCompleteLoopEvent,
 BMCompleteEvent, BMSegmentStartEvent, BMDestroyEvent, BMEnterFrameEvent, BMCompleteLoopEvent, BMCompleteEvent, BMSegmentStartEvent,
 BMDestroyEvent, BMRenderFrameErrorEvent, BMConfigErrorEvent, markerParser */
 
@@ -10027,13 +6885,10 @@ var AnimationItem = function () {
   this.playDirection = 1;
   this.playCount = 0;
   this.animationData = {};
-  this.assets = [];
-  this.isPaused = true;
-  this.autoplay = false;
+ 
   this.loop = true;
   this.renderer = null;
   this.animationID = createElementID();
-  this.assetsPath = '';
   this.timeCompleted = 0;
   this.segmentPos = 0;
   this.isSubframeEnabled = subframeEnabled;
@@ -10041,8 +6896,6 @@ var AnimationItem = function () {
   this._idle = true;
   this._completedLoop = false;
   this.projectInterface = ProjectInterface();
-  this.imagePreloader = new ImagePreloader();
-  this.audioController = audioControllerFactory();
   this.markers = [];
 };
 
@@ -10052,59 +6905,16 @@ AnimationItem.prototype.setParams = function (params) {
   if (params.wrapper || params.container) {
     this.wrapper = params.wrapper || params.container;
   }
-  var animType = 'svg';
-  if (params.animType) {
-    animType = params.animType;
-  } else if (params.renderer) {
-    animType = params.renderer;
-  }
-  switch (animType) {
-    case 'canvas':
-      this.renderer = new CanvasRenderer(this, params.rendererSettings);
-      break;
-    case 'svg':
-      this.renderer = new SVGRenderer(this, params.rendererSettings);
-      break;
-    default:
-      this.renderer = new HybridRenderer(this, params.rendererSettings);
-      break;
-  }
-  this.imagePreloader.setCacheType(animType, this.renderer.globalData.defs);
+  this.renderer = new SVGRenderer(this, params.rendererSettings);
+
   this.renderer.setProjectInterface(this.projectInterface);
-  this.animType = animType;
-  if (params.loop === ''
-        || params.loop === null
-        || params.loop === undefined
-        || params.loop === true) {
-    this.loop = true;
-  } else if (params.loop === false) {
-    this.loop = false;
-  } else {
-    this.loop = parseInt(params.loop, 10);
-  }
-  this.autoplay = 'autoplay' in params ? params.autoplay : true;
+  this.animType = 'svg';
+  this.loop = true;
   this.name = params.name ? params.name : '';
   this.autoloadSegments = Object.prototype.hasOwnProperty.call(params, 'autoloadSegments') ? params.autoloadSegments : true;
-  this.assetsPath = params.assetsPath;
   this.initialSegment = params.initialSegment;
-  if (params.audioFactory) {
-    this.audioController.setAudioFactory(params.audioFactory);
-  }
-  if (params.animationData) {
-    this.configAnimation(params.animationData);
-  } else if (params.path) {
-    if (params.path.lastIndexOf('\\') !== -1) {
-      this.path = params.path.substr(0, params.path.lastIndexOf('\\') + 1);
-    } else {
-      this.path = params.path.substr(0, params.path.lastIndexOf('/') + 1);
-    }
-    this.fileName = params.path.substr(params.path.lastIndexOf('/') + 1);
-    this.fileName = this.fileName.substr(0, this.fileName.lastIndexOf('.json'));
-
-    assetLoader.load(params.path, this.configAnimation.bind(this), function () {
-      this.trigger('data_failed');
-    }.bind(this));
-  }
+  this.configAnimation(params.animationData);
+  
 };
 
 AnimationItem.prototype.setData = function (wrapper, animationData) {
@@ -10152,14 +6962,7 @@ AnimationItem.prototype.setData = function (wrapper, animationData) {
   } else if (loop !== '') {
     params.loop = parseInt(loop, 10);
   }
-  var autoplay = wrapperAttributes.getNamedItem('data-anim-autoplay') // eslint-disable-line no-nested-ternary
-    ? wrapperAttributes.getNamedItem('data-anim-autoplay').value
-    : wrapperAttributes.getNamedItem('data-bm-autoplay') // eslint-disable-line no-nested-ternary
-      ? wrapperAttributes.getNamedItem('data-bm-autoplay').value
-      : wrapperAttributes.getNamedItem('bm-autoplay')
-        ? wrapperAttributes.getNamedItem('bm-autoplay').value
-        : true;
-  params.autoplay = autoplay !== 'false';
+
 
   params.name = wrapperAttributes.getNamedItem('data-name') // eslint-disable-line no-nested-ternary
     ? wrapperAttributes.getNamedItem('data-name').value
@@ -10183,6 +6986,7 @@ AnimationItem.prototype.setData = function (wrapper, animationData) {
 };
 
 AnimationItem.prototype.includeLayers = function (data) {
+  debugger;
   if (data.op > this.animationData.op) {
     this.animationData.op = data.op;
     this.totalFrames = Math.floor(data.op - this.animationData.ip);
@@ -10203,10 +7007,6 @@ AnimationItem.prototype.includeLayers = function (data) {
       i += 1;
     }
   }
-  if (data.chars || data.fonts) {
-    this.renderer.globalData.fontManager.addChars(data.chars);
-    this.renderer.globalData.fontManager.addFonts(data.fonts, this.renderer.globalData.defs);
-  }
   if (data.assets) {
     len = data.assets.length;
     for (i = 0; i < len; i += 1) {
@@ -10214,11 +7014,8 @@ AnimationItem.prototype.includeLayers = function (data) {
     }
   }
   this.animationData.__complete = false;
-  dataManager.completeData(this.animationData, this.renderer.globalData.fontManager);
+  dataManager.completeData(this.animationData);
   this.renderer.includeLayers(data.layers);
-  if (expressionsPlugin) {
-    expressionsPlugin.initExpressions(this);
-  }
   this.loadNextSegment();
 };
 
@@ -10246,16 +7043,6 @@ AnimationItem.prototype.loadSegments = function () {
   this.loadNextSegment();
 };
 
-AnimationItem.prototype.imagesLoaded = function () {
-  this.trigger('loaded_images');
-  this.checkLoaded();
-};
-
-AnimationItem.prototype.preloadImages = function () {
-  this.imagePreloader.setAssetsPath(this.assetsPath);
-  this.imagePreloader.setPath(this.path);
-  this.imagePreloader.loadAssets(this.animationData.assets, this.imagesLoaded.bind(this));
-};
 
 AnimationItem.prototype.configAnimation = function (animData) {
   if (!this.renderer) {
@@ -10265,9 +7052,11 @@ AnimationItem.prototype.configAnimation = function (animData) {
     this.animationData = animData;
 
     if (this.initialSegment) {
+    
       this.totalFrames = Math.floor(this.initialSegment[1] - this.initialSegment[0]);
       this.firstFrame = Math.round(this.initialSegment[0]);
     } else {
+      debugger;
       this.totalFrames = Math.floor(this.animationData.op - this.animationData.ip);
       this.firstFrame = Math.round(this.animationData.ip);
     }
@@ -10282,48 +7071,26 @@ AnimationItem.prototype.configAnimation = function (animData) {
     this.renderer.searchExtraCompositions(animData.assets);
     this.markers = markerParser(animData.markers || []);
     this.trigger('config_ready');
-    this.preloadImages();
     this.loadSegments();
     this.updaFrameModifier();
-    this.waitForFontsLoaded();
-    if (this.isPaused) {
-      this.audioController.pause();
-    }
+    this.checkLoaded();
+   
   } catch (error) {
     this.triggerConfigError(error);
   }
 };
 
-AnimationItem.prototype.waitForFontsLoaded = function () {
-  if (!this.renderer) {
-    return;
-  }
-  if (this.renderer.globalData.fontManager.isLoaded) {
-    this.checkLoaded();
-  } else {
-    setTimeout(this.waitForFontsLoaded.bind(this), 20);
-  }
-};
 
 AnimationItem.prototype.checkLoaded = function () {
-  if (!this.isLoaded
-        && this.renderer.globalData.fontManager.isLoaded
-        && (this.imagePreloader.loadedImages() || this.renderer.rendererType !== 'canvas')
-        && (this.imagePreloader.loadedFootages())
-  ) {
+  if (!this.isLoaded) {
     this.isLoaded = true;
-    dataManager.completeData(this.animationData, this.renderer.globalData.fontManager);
-    if (expressionsPlugin) {
-      expressionsPlugin.initExpressions(this);
-    }
+    dataManager.completeData(this.animationData);
     this.renderer.initItems();
     setTimeout(function () {
       this.trigger('DOMLoaded');
     }.bind(this), 0);
     this.gotoFrame();
-    if (this.autoplay) {
-      this.play();
-    }
+    this.play();
   }
 };
 
@@ -10360,48 +7127,10 @@ AnimationItem.prototype.play = function (name) {
   if (name && this.name !== name) {
     return;
   }
-  if (this.isPaused === true) {
-    this.isPaused = false;
-    this.audioController.resume();
-    if (this._idle) {
-      this._idle = false;
-      this.trigger('_active');
-    }
-  }
+  this.trigger('_active');
+
 };
 
-AnimationItem.prototype.pause = function (name) {
-  if (name && this.name !== name) {
-    return;
-  }
-  if (this.isPaused === false) {
-    this.isPaused = true;
-    this._idle = true;
-    this.trigger('_idle');
-    this.audioController.pause();
-  }
-};
-
-AnimationItem.prototype.togglePause = function (name) {
-  if (name && this.name !== name) {
-    return;
-  }
-  if (this.isPaused === true) {
-    this.play();
-  } else {
-    this.pause();
-  }
-};
-
-AnimationItem.prototype.stop = function (name) {
-  if (name && this.name !== name) {
-    return;
-  }
-  this.pause();
-  this.playCount = 0;
-  this._completedLoop = false;
-  this.setCurrentRawFrameValue(0);
-};
 
 AnimationItem.prototype.getMarkerData = function (markerName) {
   var marker;
@@ -10414,46 +7143,10 @@ AnimationItem.prototype.getMarkerData = function (markerName) {
   return null;
 };
 
-AnimationItem.prototype.goToAndStop = function (value, isFrame, name) {
-  if (name && this.name !== name) {
-    return;
-  }
-  var numValue = Number(value);
-  if (isNaN(numValue)) {
-    var marker = this.getMarkerData(value);
-    if (marker) {
-      this.goToAndStop(marker.time, true);
-    }
-  } else if (isFrame) {
-    this.setCurrentRawFrameValue(value);
-  } else {
-    this.setCurrentRawFrameValue(value * this.frameModifier);
-  }
-  this.pause();
-};
 
-AnimationItem.prototype.goToAndPlay = function (value, isFrame, name) {
-  if (name && this.name !== name) {
-    return;
-  }
-  var numValue = Number(value);
-  if (isNaN(numValue)) {
-    var marker = this.getMarkerData(value);
-    if (marker) {
-      if (!marker.duration) {
-        this.goToAndStop(marker.time, true);
-      } else {
-        this.playSegments([marker.time, marker.time + marker.duration], true);
-      }
-    }
-  } else {
-    this.goToAndStop(numValue, isFrame, name);
-  }
-  this.play();
-};
 
 AnimationItem.prototype.advanceTime = function (value) {
-  if (this.isPaused === true || this.isLoaded === false) {
+  if (this.isLoaded === false) {
     return;
   }
   var nextValue = this.currentRawFrame + value * this.frameModifier;
@@ -10494,8 +7187,7 @@ AnimationItem.prototype.advanceTime = function (value) {
     this.setCurrentRawFrameValue(nextValue);
   }
   if (_isComplete) {
-    this.setCurrentRawFrameValue(nextValue);
-    this.pause();
+    this.setCurrentRawFrameValue(nextValue);;
     this.trigger('complete');
   }
 };
@@ -10503,25 +7195,11 @@ AnimationItem.prototype.advanceTime = function (value) {
 AnimationItem.prototype.adjustSegment = function (arr, offset) {
   this.playCount = 0;
   if (arr[1] < arr[0]) {
-    if (this.frameModifier > 0) {
-      if (this.playSpeed < 0) {
-        this.setSpeed(-this.playSpeed);
-      } else {
-        this.setDirection(-1);
-      }
-    }
     this.totalFrames = arr[0] - arr[1];
     this.timeCompleted = this.totalFrames;
     this.firstFrame = arr[1];
     this.setCurrentRawFrameValue(this.totalFrames - 0.001 - offset);
   } else if (arr[1] > arr[0]) {
-    if (this.frameModifier < 0) {
-      if (this.playSpeed < 0) {
-        this.setSpeed(-this.playSpeed);
-      } else {
-        this.setDirection(1);
-      }
-    }
     this.totalFrames = arr[1] - arr[0];
     this.timeCompleted = this.totalFrames;
     this.firstFrame = arr[0];
@@ -10531,20 +7209,11 @@ AnimationItem.prototype.adjustSegment = function (arr, offset) {
 };
 AnimationItem.prototype.setSegment = function (init, end) {
   var pendingFrame = -1;
-  if (this.isPaused) {
-    if (this.currentRawFrame + this.firstFrame < init) {
-      pendingFrame = init;
-    } else if (this.currentRawFrame + this.firstFrame > end) {
-      pendingFrame = end - init;
-    }
-  }
+
 
   this.firstFrame = init;
   this.totalFrames = end - init;
   this.timeCompleted = this.totalFrames;
-  if (pendingFrame !== -1) {
-    this.goToAndStop(pendingFrame, true);
-  }
 };
 
 AnimationItem.prototype.playSegments = function (arr, forceFlag) {
@@ -10563,9 +7232,8 @@ AnimationItem.prototype.playSegments = function (arr, forceFlag) {
   if (this.segments.length && forceFlag) {
     this.adjustSegment(this.segments.shift(), 0);
   }
-  if (this.isPaused) {
+ 
     this.play();
-  }
 };
 
 AnimationItem.prototype.resetSegments = function (forceFlag) {
@@ -10589,7 +7257,6 @@ AnimationItem.prototype.destroy = function (name) {
     return;
   }
   this.renderer.destroy();
-  this.imagePreloader.destroy();
   this.trigger('destroy');
   this._cbs = null;
   this.onEnterFrame = null;
@@ -10598,77 +7265,25 @@ AnimationItem.prototype.destroy = function (name) {
   this.onSegmentStart = null;
   this.onDestroy = null;
   this.renderer = null;
-  this.renderer = null;
-  this.imagePreloader = null;
   this.projectInterface = null;
 };
 
 AnimationItem.prototype.setCurrentRawFrameValue = function (value) {
+  // console.log(value)
   this.currentRawFrame = value;
   this.gotoFrame();
 };
 
-AnimationItem.prototype.setSpeed = function (val) {
-  this.playSpeed = val;
-  this.updaFrameModifier();
-};
-
-AnimationItem.prototype.setDirection = function (val) {
-  this.playDirection = val < 0 ? -1 : 1;
-  this.updaFrameModifier();
-};
-
-AnimationItem.prototype.setVolume = function (val, name) {
-  if (name && this.name !== name) {
-    return;
-  }
-  this.audioController.setVolume(val);
-};
-
-AnimationItem.prototype.getVolume = function () {
-  return this.audioController.getVolume();
-};
-
-AnimationItem.prototype.mute = function (name) {
-  if (name && this.name !== name) {
-    return;
-  }
-  this.audioController.mute();
-};
-
-AnimationItem.prototype.unmute = function (name) {
-  if (name && this.name !== name) {
-    return;
-  }
-  this.audioController.unmute();
-};
-
 AnimationItem.prototype.updaFrameModifier = function () {
   this.frameModifier = this.frameMult * this.playSpeed * this.playDirection;
-  this.audioController.setRate(this.playSpeed * this.playDirection);
+
 };
 
 AnimationItem.prototype.getPath = function () {
   return this.path;
 };
 
-AnimationItem.prototype.getAssetsPath = function (assetData) {
-  var path = '';
-  if (assetData.e) {
-    path = assetData.p;
-  } else if (this.assetsPath) {
-    var imagePath = assetData.p;
-    if (imagePath.indexOf('images/') !== -1) {
-      imagePath = imagePath.split('/')[1];
-    }
-    path = this.assetsPath + imagePath;
-  } else {
-    path = this.path;
-    path += assetData.u ? assetData.u : '';
-    path += assetData.p;
-  }
-  return path;
-};
+
 
 AnimationItem.prototype.getAssetData = function (id) {
   var i = 0;
@@ -10751,25 +7366,12 @@ AnimationItem.prototype.triggerConfigError = function (nativeError) {
   }
 };
 
-/* exported EffectsManager */
-
-function EffectsManager() {
-  this.effectElements = [];
-}
 
 
 var lottie = {};
 
 function setLocationHref(href) {
   locationHref = href;
-}
-
-function searchAnimations() {
-  if (standalone === true) {
-    animationManager.searchAnimations(animationData, standalone, renderer);
-  } else {
-    animationManager.searchAnimations();
-  }
 }
 
 function setSubframeRendering(flag) {
@@ -10815,12 +7417,6 @@ function inBrowser() {
   return typeof navigator !== 'undefined';
 }
 
-function installPlugin(type, plugin) {
-  if (type === 'expressions') {
-    expressionsPlugin = plugin;
-  }
-}
-
 function getFactory(name) {
   switch (name) {
     case 'propertyFactory':
@@ -10828,6 +7424,7 @@ function getFactory(name) {
     case 'shapePropertyFactory':
       return ShapePropertyFactory;
     case 'matrix':
+      console.log("In the Matrix")
       return Matrix;
     default:
       return null;
@@ -10835,37 +7432,22 @@ function getFactory(name) {
 }
 
 lottie.play = animationManager.play;
-lottie.pause = animationManager.pause;
 lottie.setLocationHref = setLocationHref;
-lottie.togglePause = animationManager.togglePause;
-lottie.setSpeed = animationManager.setSpeed;
-lottie.setDirection = animationManager.setDirection;
-lottie.stop = animationManager.stop;
-lottie.searchAnimations = searchAnimations;
-lottie.registerAnimation = animationManager.registerAnimation;
 lottie.loadAnimation = loadAnimation;
 lottie.setSubframeRendering = setSubframeRendering;
 lottie.resize = animationManager.resize;
-// lottie.start = start;
-lottie.goToAndStop = animationManager.goToAndStop;
+
 lottie.destroy = animationManager.destroy;
 lottie.setQuality = setQuality;
 lottie.inBrowser = inBrowser;
-lottie.installPlugin = installPlugin;
 lottie.freeze = animationManager.freeze;
 lottie.unfreeze = animationManager.unfreeze;
-lottie.setVolume = animationManager.setVolume;
-lottie.mute = animationManager.mute;
-lottie.unmute = animationManager.unmute;
-lottie.getRegisteredAnimations = animationManager.getRegisteredAnimations;
 lottie.setIDPrefix = setIDPrefix;
-lottie.__getFactory = getFactory;
-lottie.version = '5.7.13';
+lottie.version = '5.7.11';
 
 function checkReady() {
   if (document.readyState === 'complete') {
     clearInterval(readyStateCheckInterval);
-    searchAnimations();
   }
 }
 
@@ -10892,7 +7474,10 @@ if (standalone) {
   queryString = myScript.src.replace(/^[^\?]+\??/, ''); // eslint-disable-line no-useless-escape
   renderer = getQueryVariable('renderer');
 }
-var readyStateCheckInterval = setInterval(checkReady, 100);
+
+//var readyStateCheckInterval = setInterval(checkReady, 100);
 
 return lottie;
 }));
+
+/* eslint-disable */
